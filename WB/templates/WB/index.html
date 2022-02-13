@@ -1,0 +1,71 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'WB/style.css' %}">
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+
+    <script>
+          $(document).ready(function() {
+            $('.js-example-basic-multiple').select2();
+          });
+    </script>
+    <title>World bank graph maker</title>
+</head>
+<body>
+    <h1>This is my World Bank graph maker</h1>Hello, world. You're at the WB index.<br>
+    <a href="{% url 'WB:index1' %}">Index1</a>
+
+<form action="{% url 'WB:graph' %}" id="WBgraph" method="get">
+
+    <label for="states">Select Countries</label>
+        <br>
+    <select class="js-example-basic-multiple" id="states" name="states" multiple="multiple" required="required">
+
+        {%  for code,country in countries %}
+            <option value="{{code}}">{{country}}</option>
+        {% endfor %}
+    </select>
+
+    <br><br>
+    <label for="metrics_list">Select Metric(s)</label>
+        <br>
+    <select class="js-example-basic-multiple" id="metrics" name="metrics" multiple="multiple" required="required">
+        {%  for code,metric in metrics %}
+            <option value="{{code}}">{{metric}}</option>
+        {% endfor %}
+    </select>
+
+    <br><br>
+    <label for="year1">Range of years</label>
+    <input type="number" id="year1" name="year1" min="1960" max="2022" value="1960" required="required"> -
+    <input type="number"  id="year2" name="year2" min="1960" max="2022" value="2021" required="required">
+    <br><br>
+    <label for="title">Graph Title</label>
+    <input type="text" id="title" name="title" value="">
+    <br><br>
+    <label for="xlabel">X-axis Label</label>
+    <input type="text" id="xlabel" name="xlabel" value="">
+    <br><br>
+    <label for="ylabel">Y-axis Label</label>
+    <input id="ylabel" name="ylabel" value="">
+    <br><br>
+    <label for="auto_year">Auto adjust year range</label>
+    <input type="checkbox" id="auto_year" name="auto_year" value="1" checked>
+    <br><br>
+{#    <label for="color">Pick a primary graph colour</label>#}
+{#    <input type="color" name="color" id="color">#}
+{#    <br><br>#}
+
+    <input type="submit" value="Make Graph">
+</form>
+
+
+</body>
+</html>
