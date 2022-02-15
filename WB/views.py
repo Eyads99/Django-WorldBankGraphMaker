@@ -1,15 +1,17 @@
 # from django.http import Http404
 # from django.template import loader
-from django.http import HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render  # , get_object_or_404
-from .WBAPI import getWBCountries, getWBMetrics, get_data, display_graph, download_graph, download_CSV
+from .WBAPI import getWBCountries, getWBMetrics, get_data, display_graph, download_graph#, download_CSV
 from .forms import NameForm
 
+import os
 from io import BytesIO
 import base64
 import matplotlib
-matplotlib.use("Agg")
+from wsgiref.util import FileWrapper
 import matplotlib.pyplot as plt
+matplotlib.use("Agg")
 
 
 def get_name(request):
@@ -53,7 +55,7 @@ def graph(request):
     countries = []
     metrics = []
 
-    #get the request data
+    # get the request data
     countries.append(request.GET['states'])
     metrics.append(request.GET['metrics'])
     start_year = int(request.GET['year1'])
@@ -70,26 +72,33 @@ def graph(request):
         auto_scale = False
 
     DF = get_data(countries, metrics, start_year, end_year)
-    fig = display_graph(DF, countries, metrics, start_year, end_year,auto_scale, title, xlabel, ylabel)
+    fig = display_graph(DF, countries, metrics, start_year, end_year, auto_scale, title, xlabel, ylabel)
     #   download_graph(fig, 'graph')
-    download_CSV(DF, 'data')
-
-
+    #download_CSV(DF, 'data')
 
     buf = BytesIO()
-    plt.savefig(buf, format='png',bbox_inches='tight')
+    plt.savefig(buf, format='png', bbox_inches='tight')
     image_base64 = base64.b64encode(buf.getvalue()).decode('utf-8').replace('\n', '')
     buf.close()
 
-
-
     context = {'GRAPH_IMG': image_base64,
                'CSV_FILE': './../../data.csv',
-               #'plt': fig,
-               #'DF': DF,
+               # 'plt': fig,
+                'DF': DF,
                }
 
     return render(request, 'WB/graph.html', context)
+
+
+def download_CSV(request,DF):
+    filename = 'data.csv'
+    response = HttpResponse(DF, content_type='text/csv')
+    response['Content-Disposition'] = 'inline; filename=' + os.path.basename(filename)
+    return response
+    # content = FileWrapper(filename)
+    # response = HttpResponse(content, content_type='application/csv')
+    # response['Content-Length'] = os.path.getsize(filename)
+    # response['Content-Disposition'] = 'attachment; filename=%s' % 'faults.pdf'
 
 
 def index1(request):

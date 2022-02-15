@@ -11,4 +11,5 @@ urlpatterns = [
     path(r"index1", views.index1, name='index1'),
     path(r"getname", views.get_name, name='name'),
     path(r"graph", views.graph, name='graph'),
+    path(r'download_CSV', views.download_CSV, name="download_CSV"),
 ]

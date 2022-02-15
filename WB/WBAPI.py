@@ -100,7 +100,7 @@ def download_graph(plt, file_name='plot', location='', file_format='png'):
 def download_CSV(dataFrame, file_name='data'):
     # Delete first column from CSV before downloading
     dataFrame = dataFrame.drop([dataFrame.columns[0]], axis=1)
-    dataFrame.to_csv(file_name + '.csv', na_rep='NaN')
+    dataFrame.to_csv(file_name + '.csv', na_rep='',index=False)
 
 
 def get_three_letter_country_codes(country_list):
