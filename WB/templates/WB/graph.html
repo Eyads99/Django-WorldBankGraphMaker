@@ -9,12 +9,12 @@
 <h1>Your Graph</h1>
 <!--<img src="{GRAPH_IMG}" alt="Graph">-->
 
-<img src="data:image/png;base64, {{ GRAPH_IMG }}" alt="graph" width="1000" height="200" />
+<img src="data:image/png;base64, {{ GRAPH_IMG }}" alt="graph" width="1000" height="200"/>
 <br>
 <a href="data:image/png;base64, {{ GRAPH_IMG }}" download>Download Graph</a>
 <br>
 <a href="../../../data.csv" download>Download CSV</a>
 <br>
- <a class="button" href="{% url 'WB:download_CSV' DF %}">Download CSV file</a>
+<a class="button" href="data:text/csv; {{ CSV }}">Download CSV file</a>
 </body>
 </html>

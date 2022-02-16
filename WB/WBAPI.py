@@ -56,13 +56,16 @@ def display_graph(DF, country_codes, metric_list, start_year, end_year, auto_adj
     if DF is None or len(DF) == 0 or DF.empty is True:
         return None
 
+    # print(f"DF\n{type(DF)}")
+
     if auto_adjust:
+        # TODO
         # set start and end year to the first and last non NAN value in the dataframe for all countries
-        print(f"DF\n{DF}")
-        print(f"DF.columns\n{DF.columns}")
-        print(f"DF with count\n{DF[country_codes[0]]}")
-        start_year = DF.index[0]
-        end_year = DF.index[-1]
+        # print(f"DF\n{DF}")
+        # print(f"DF.columns\n{DF.columns}")
+        # print(f"DF with count\n{DF[country_codes[0]]}")
+        start_year = start_year  # DF.index[0]
+        # end_year = DF.index[-1]
 
     if title == '':  # if no title is given
         if len(country_list) == 1:
