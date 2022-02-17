@@ -42,7 +42,7 @@ def get_data(country_codes, metric_codes, start_year=2000, end_year=2020):
         # return None
 
     return wb.data.DataFrame(series=metric_codes, economy=country_codes,
-                             time=range(start_year, end_year + 1), labels=True, index='time', numericTimeKeys=True)
+                             time=range(start_year, end_year + 1), labels=True, index='time')
 
 
 def display_graph(DF, country_codes, metric_list, start_year, end_year, auto_adjust, title='', xlabel='Year', ylabel='',
@@ -102,8 +102,8 @@ def download_graph(plt, file_name='plot', location='', file_format='png'):
 
 def download_CSV(dataFrame, file_name='data'):
     # Delete first column from CSV before downloading
-    dataFrame = dataFrame.drop([dataFrame.columns[0]], axis=1)
-    dataFrame.to_csv(file_name + '.csv', na_rep='',index=False)
+    # dataFrame = dataFrame.drop([dataFrame.columns[0]], axis=1) # delete first column
+    dataFrame.to_csv(file_name + '.csv', na_rep='', index=False)
 
 
 def get_three_letter_country_codes(country_list):

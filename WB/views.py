@@ -55,12 +55,12 @@ def graph(request):
     #     print(key, value)
     # extract the data from the request
 
-    countries = []
-    metrics = []
+    # countries = []
+    # metrics = []
 
     # get the request data
-    countries.append(request.GET['states'])
-    metrics.append(request.GET['metrics'])
+    countries = request.GET.getlist('states')  # get all the countries selected
+    metrics = request.GET.getlist('metrics')  # get all the metrics selected
     start_year = int(request.GET['year1'])
     end_year = int(request.GET['year2'])
     title = request.GET['title']
@@ -76,7 +76,7 @@ def graph(request):
 
     DF = get_data(countries, metrics, start_year, end_year)
     fig = display_graph(DF, countries, metrics, start_year, end_year, auto_scale, title, xlabel, ylabel)
-    #   download_graph(fig, 'graph')
+    # download_graph(fig, 'graph')
     # download_CSV(DF, 'data')
 
     buf = BytesIO()
@@ -84,14 +84,20 @@ def graph(request):
     image_base64 = base64.b64encode(buf.getvalue()).decode('utf-8').replace('\n', '')
     buf.close()
 
-    # dataFrame = dataFrame.drop([dataFrame.columns[0]], axis=1)
+    # transpose dataFrame
+    # del DF.time
+    DF.reset_index(drop=True, inplace=True)
+    DF = DF.T
+    print(DF)
 
-    context = {'GRAPH_IMG': image_base64,
-               'CSV_FILENAME': './../../data.csv',
-               # 'plt': fig,
-               'DF': DF,
-               'CSV': DF.to_csv(index=False),
-               }
+    context = {
+        'GRAPH_IMG': image_base64,
+        'CSV_FILENAME': './../../data.csv',
+        # 'plt': fig,
+        'DF': DF,
+        # turn DF to CSV and delete everything until the fist newline
+        'CSV': DF.to_csv(index=True, header=True),
+    }
 
     return render(request, 'WB/graph.html', context)
 
