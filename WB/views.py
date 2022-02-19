@@ -75,6 +75,34 @@ def graph(request):
         auto_scale = False
 
     DF = get_data(countries, metrics, start_year, end_year)
+
+    if auto_scale:
+
+        for country in countries:  # get the first non NaN value in DF across all countries
+            for i in range(start_year, end_year):
+                print(DF[country][i])
+                if not pd.isnull(DF[country][i]):
+                    start_year = i
+                    break
+
+            # set end year to last non NaN Value in the dataframe
+            for i in range(end_year, start_year, -1):
+                try:
+                    if not pd.isnull(DF[country][i]):
+                        end_year = i
+                        break
+                except KeyError:  # if the year is not in the dataframe
+                    pass
+    # print(start_year, end_year)
+    # print(DF)
+    # print(DF.columns)
+    # print(DF.index)
+    # print(DF.values)
+
+    # create the graph
+    fig = display_graph(DF, countries, metrics, start_year, end_year, title, xlabel, ylabel)
+
+    # convert the figure to a PNG image
     fig = display_graph(DF, countries, metrics, start_year, end_year, auto_scale, title, xlabel, ylabel)
     # download_graph(fig, 'graph')
     # download_CSV(DF, 'data')
@@ -86,7 +114,7 @@ def graph(request):
 
     # transpose dataFrame
     # del DF.time
-    DF.reset_index(drop=True, inplace=True)
+    DF.reset_index(drop=True, inplace=True)  # removes row of incorrect years
     DF = DF.T
     print(DF)
 
