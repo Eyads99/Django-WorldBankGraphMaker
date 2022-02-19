@@ -15,8 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from . import views
 
 urlpatterns = [
+    # landing page
+    path(r'', views.home, name='index'),
     path('admin/', admin.site.urls),
     path('WB/', include('WB.urls', namespace="WB")),
     path("select2/", include("django_select2.urls")),

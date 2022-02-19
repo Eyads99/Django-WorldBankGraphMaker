@@ -42,7 +42,7 @@ def get_data(country_codes, metric_codes, start_year=2000, end_year=2020):
         # return None
 
     return wb.data.DataFrame(series=metric_codes, economy=country_codes,
-                             time=range(start_year, end_year + 1), labels=True, index='time')
+                             time=range(start_year, end_year + 1), labels=True, index='time', numericTimeKeys=True)
 
 
 def display_graph(DF, country_codes, metric_list, start_year, end_year, auto_adjust, title='', xlabel='Year', ylabel='',

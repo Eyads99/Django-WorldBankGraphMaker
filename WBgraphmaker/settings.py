@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'WBgraphmaker',
     'WB',
     'django_select2',
     'django.contrib.admin',
