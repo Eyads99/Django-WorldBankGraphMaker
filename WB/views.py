@@ -68,6 +68,10 @@ def graph(request):
     if xlabel == '':
         xlabel = 'Year'
     ylabel = request.GET['ylabel']
+    # width = reuqest.GET['width']
+    # height = request.GET['height']
+    # colors = request.GET.getlist('colors')
+    # points = request.GET.getlist('points') #should the points be displayed
 
     try:
         auto_scale = request.GET['auto_year']
