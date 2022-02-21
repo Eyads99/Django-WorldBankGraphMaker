@@ -55,9 +55,6 @@ def graph(request):
     #     print(key, value)
     # extract the data from the request
 
-    # countries = []
-    # metrics = []
-
     # get the request data
     countries = request.GET.getlist('states')  # get all the countries selected
     metrics = request.GET.getlist('metrics')  # get all the metrics selected
@@ -81,10 +78,8 @@ def graph(request):
     DF = get_data(countries, metrics, start_year, end_year)
 
     if auto_scale:
-
         for country in countries:  # get the first non NaN value in DF across all countries
             for i in range(start_year, end_year):
-                print(DF[country][i])
                 if not pd.isnull(DF[country][i]):
                     start_year = i
                     break
@@ -97,17 +92,9 @@ def graph(request):
                         break
                 except KeyError:  # if the year is not in the dataframe
                     pass
-    # print(start_year, end_year)
-    # print(DF)
-    # print(DF.columns)
-    # print(DF.index)
-    # print(DF.values)
 
     # create the graph
     fig = display_graph(DF, countries, metrics, start_year, end_year, title, xlabel, ylabel)
-
-    # convert the figure to a PNG image
-    fig = display_graph(DF, countries, metrics, start_year, end_year, auto_scale, title, xlabel, ylabel)
     # download_graph(fig, 'graph')
     # download_CSV(DF, 'data')
 
@@ -120,14 +107,13 @@ def graph(request):
     # del DF.time
     DF.reset_index(drop=True, inplace=True)  # removes row of incorrect years
     DF = DF.T
-    print(DF)
+    # print(DF)
 
     context = {
         'GRAPH_IMG': image_base64,
         'CSV_FILENAME': './../../data.csv',
         # 'plt': fig,
         'DF': DF,
-        # turn DF to CSV and delete everything until the fist newline
         'CSV': DF.to_csv(index=True, header=True),
     }
 

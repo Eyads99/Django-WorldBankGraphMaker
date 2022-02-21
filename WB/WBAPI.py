@@ -45,8 +45,8 @@ def get_data(country_codes, metric_codes, start_year=2000, end_year=2020):
                              time=range(start_year, end_year + 1), labels=True, index='time', numericTimeKeys=True)
 
 
-def display_graph(DF, country_codes, metric_list, start_year, end_year, auto_adjust, title='', xlabel='Year', ylabel='',
-                  height=6, width=30):
+def display_graph(DF, country_codes, metric_list, start_year, end_year, title='', xlabel='Year', ylabel='',
+                  height=6, width=30, kind='line'):
     country_list = []
     for country in country_codes:  # get the short name of countries
         country_list.append(wb.economy.metadata.get(country).metadata['ShortName'])
@@ -57,15 +57,6 @@ def display_graph(DF, country_codes, metric_list, start_year, end_year, auto_adj
         return None
 
     # print(f"DF\n{type(DF)}")
-
-    if auto_adjust:
-        # TODO
-        # set start and end year to the first and last non NAN value in the dataframe for all countries
-        # print(f"DF\n{DF}")
-        # print(f"DF.columns\n{DF.columns}")
-        # print(f"DF with count\n{DF[country_codes[0]]}")
-        start_year = start_year  # DF.index[0]
-        # end_year = DF.index[-1]
 
     if title == '':  # if no title is given
         if len(country_list) == 1:
@@ -80,15 +71,18 @@ def display_graph(DF, country_codes, metric_list, start_year, end_year, auto_adj
         ls='solid',
         title=title,
         xlabel=xlabel,
-        ylabel=ylabel)
+        ylabel=ylabel,
+        kind=kind,
+        marker='o',
+    )
 
     plt.set_xticks(range(start_year, end_year + 1))  # to remove 0.5 years
 
     if len(country_list) > 1:
-        plt.legend(country_list, loc='upper left')  # list all countries in the legend
+        plt.legend(country_list, loc='upper left', bbox_to_anchor=(1, 1))  # list all countries in the legend
     else:
         metric_labels = [wb.series.metadata.get(metric).metadata.get('IndicatorName') for metric in metric_list]
-        plt.legend(metric_labels, loc='upper left')
+        plt.legend(metric_labels, loc='upper left', bbox_to_anchor=(1, 1))
 
     plt.bbox_inches = 'tight'  # to remove whitespace around the graph
     # plt.figure.show()
