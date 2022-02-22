@@ -9,11 +9,13 @@
 <h1>Your Graph</h1>
 <!--<img src="{GRAPH_IMG}" alt="Graph">-->
 
-<img src="data:image/png;base64, {{ GRAPH_IMG }}" alt="graph" width="1000" height="200"/>
+<img src="data:image/png;base64, {{ GRAPH_IMG }}" alt="graph" width="1250"/>
 <br>
 <a href="data:image/png;base64, {{ GRAPH_IMG }}" download="graph.png">Download Graph</a>
 <br>
 <a class="button" href="data:text/csv; {{ CSV }}" download="data.csv">Download CSV file</a>
+<br>
+<!--{{ table|safe }}-->
 
 </body>
 </html>

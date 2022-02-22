@@ -66,6 +66,11 @@ def display_graph(DF, country_codes, metric_list, start_year, end_year, title=''
             title += metric_name.metadata.get('IndicatorName')
             print(title)
 
+    # get title until first opening braket saving the first half to title and the second half to ylabel
+    if '(' in title:
+        title, ylabel = title.split('(', 1)
+        ylabel = ylabel[:-1]  # remove closing bracket
+
     plt = DF.plot(
         figsize=(width, height),
         ls='solid',
@@ -99,6 +104,9 @@ def download_CSV(dataFrame, file_name='data'):
     # dataFrame = dataFrame.drop([dataFrame.columns[0]], axis=1) # delete first column
     dataFrame.to_csv(file_name + '.csv', na_rep='', index=False)
 
+
+def makeHTMLTable(dataFrame):
+    return wb.htmlTable(dataFrame)
 
 def get_three_letter_country_codes(country_list):
     """

@@ -2,7 +2,8 @@
 # from django.template import loader
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render  # , get_object_or_404
-from .WBAPI import getWBCountries, getWBMetrics, get_data, display_graph, download_graph  # , download_CSV
+from .WBAPI import getWBCountries, getWBMetrics, get_data, display_graph, download_graph, \
+    makeHTMLTable  # , download_CSV
 from .forms import NameForm
 
 import os
@@ -12,6 +13,7 @@ import matplotlib
 from wsgiref.util import FileWrapper
 import matplotlib.pyplot as plt
 import pandas as pd
+import wbgapi as w
 import csv
 
 matplotlib.use("Agg")
@@ -112,6 +114,7 @@ def graph(request):
     context = {
         'GRAPH_IMG': image_base64,
         'CSV_FILENAME': './../../data.csv',
+        'table': makeHTMLTable(DF),
         # 'plt': fig,
         'DF': DF,
         'CSV': DF.to_csv(index=True, header=True),
