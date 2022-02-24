@@ -66,7 +66,7 @@ def display_graph(DF, country_codes, metric_list, start_year, end_year, title=''
             title += metric_name.metadata.get('IndicatorName')
             print(title)
 
-    # get title until first opening braket saving the first half to title and the second half to ylabel
+    # get title until first opening bracket saving the first half to title and the second half to ylabel
     if '(' in title:
         title, ylabel = title.split('(', 1)
         ylabel = ylabel[:-1]  # remove closing bracket

@@ -85,6 +85,9 @@ def graph(request):
                 if not pd.isnull(DF[country][i]):
                     start_year = i
                     break
+            else:  # check if all data in DF is NaN
+                print('No data available')
+                return render(request, 'WB/graph.html', {'error': 'No Data Available'})
 
             # set end year to last non NaN Value in the dataframe
             for i in range(end_year, start_year, -1):
