@@ -36,13 +36,19 @@ def get_data(country_codes, metric_codes, start_year=2000, end_year=2020):
         return None
     if end_year > 2022:
         print("End year is greater than current year")
-
+        # return None
     if len(country_codes) > 1 and len(metric_codes) > 1:
         print('Please select a single country and multiple metrics or a single metric and multiple countries')
         # return None
 
-    return wb.data.DataFrame(series=metric_codes, economy=country_codes,
-                             time=range(start_year, end_year + 1), labels=True, index='time', numericTimeKeys=True)
+    if len(metric_codes) > 1:
+        return wb.data.DataFrame(series=metric_codes, economy=country_codes, time=range(start_year, end_year + 1),
+                                 labels=True, numericTimeKeys=True,
+                                 timeColumns=True)  # not sure what timeColumns does
+    else:
+        return wb.data.DataFrame(series=metric_codes, economy=country_codes, time=range(start_year, end_year + 1),
+                                 labels=True, index=['time'], numericTimeKeys=True,
+                                 timeColumns=True)  # not sure what timeColumns does
 
 
 def display_graph(DF, country_codes, metric_list, start_year, end_year, title='', xlabel='Year', ylabel='',
@@ -107,6 +113,7 @@ def download_CSV(dataFrame, file_name='data'):
 
 def makeHTMLTable(dataFrame):
     return wb.htmlTable(dataFrame)
+
 
 def get_three_letter_country_codes(country_list):
     """

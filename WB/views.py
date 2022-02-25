@@ -13,7 +13,6 @@ import matplotlib
 from wsgiref.util import FileWrapper
 import matplotlib.pyplot as plt
 import pandas as pd
-import wbgapi as w
 import csv
 
 matplotlib.use("Agg")
@@ -78,14 +77,17 @@ def graph(request):
         auto_scale = False
 
     DF = get_data(countries, metrics, start_year, end_year)
+    # print(DF)
+    is_data = False  # check if there is data across all countries and metrics
 
     if auto_scale:
         for country in countries:  # get the first non NaN value in DF across all countries
             for i in range(start_year, end_year):
                 if not pd.isnull(DF[country][i]):
                     start_year = i
+                    is_data = True
                     break
-            else:  # check if all data in DF is NaN
+            if not is_data and country == countries[-1]:  # check if all data in DF is NaN
                 print('No data available')
                 return render(request, 'WB/graph.html',
                               {'error': 'There is no data available for the selected countries and years'})
