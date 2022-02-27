@@ -84,14 +84,14 @@ def graph(request):
         for country in countries:  # get the first non NaN value in DF across all countries
             for i in range(start_year, end_year):
                 if not pd.isnull(DF[country][i]):
-                    start_year = i if i < start_year else start_year
+                    start_year = i if i <= start_year else start_year
                     is_data = True
                     break
             # set end year to last non NaN Value in the dataframe
             for i in range(end_year, start_year, -1):
                 try:
                     if not pd.isnull(DF[country][i]):
-                        end_year = i if i > end_year else end_year
+                        end_year = i if i >= end_year else end_year
                         break
                 except KeyError:  # if the year is not in the dataframe
                     pass
