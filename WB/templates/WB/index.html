@@ -6,30 +6,54 @@
 
 <head>
     <meta charset="UTF-8">
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    {#    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />#}
+    {#    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>#}
+    {##}
+    {#    <script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>#}
+    {##}
+    {#    <script>#}
+    {#        import Select2MultipleWidget from 'django_select2'#}
+    {#    </script>#}
+    {##}
+    {#    <script>#}
+    {##}
+    {#          $(document).ready(function() {#}
+    {#            $('.js-example-basic-multiple').select2();#}
+    {#          });#}
+    {#    </script>#}
 
-    <script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.12/js/select2.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.12/css/select2.min.css">
 
     <script>
-          $(document).ready(function() {
-            $('.js-example-basic-multiple').select2();
-          });
+        $(document).ready(function () {
+            $('#test').select2();
+        });
     </script>
+
     <title>World bank graph maker</title>
 </head>
 <body>
-    <h1>This is my World Bank graph maker</h1>Hello, world. You're at the WB index.<br>
-    <a href="{% url 'WB:index1' %}">Index1</a>
+<h1>This is my World Bank graph maker</h1>Hello, world. You're at the WB index.<br>
+<a href="{% url 'WB:index1' %}">Index1</a>
 
 <form action="{% url 'WB:graph' %}" id="WBgraph" method="get">
 
-    <label for="states">Select Countries</label>
-        <br>
-    <select class="js-example-basic-multiple" id="states" name="states" multiple="multiple" required="required">
 
-        {%  for code,country in countries %}
-            <option value="{{code}}">{{country}}</option>
+    <label for="test"></label>
+    <select id="test" name="test">
+        {% for code,country in countries %}
+            <option value="{{ code }}">{{ country }}</option>
+        {% endfor %}
+    </select>
+
+    <br>
+    <label for="states">Select Countries</label>
+    <br>
+    <select class="django-select2" id="states" name="states" multiple="multiple" required="required">
+        {% for code,country in countries %}
+            <option value="{{ code }}">{{ country }}</option>
         {% endfor %}
     </select>
 
