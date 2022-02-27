@@ -29,48 +29,56 @@
     <title>World bank graph maker</title>
 </head>
 <body>
-<h1>This is my World Bank graph maker</h1>Hello, world. You're at the WB index.<br>
-<a href="{% url 'WB:index1' %}">Index1</a>
+<div style="margin: 25px">
+    <h1>World Bank graph maker</h1>
+    This tool can help you quickly make graphs using the World bank's extensive databases<br>
+    <a href="{% url 'WB:index1' %}">Index1</a>
+</div>
 
 <form action="{% url 'WB:graph' %}" id="WBgraph" method="get">
+    <div class="form-group" style="width: 405px; margin: 25px;">
+        <label for="states">Select Countries</label>
+        <br>
+        <select class="django-select2" id="states" name="states" multiple="multiple" required="required">
+            {% for code,country in countries %}
+                <option value="{{ code }}">{{ country }}</option>
+            {% endfor %}
+        </select>
 
-    <br>
-    <label for="states">Select Countries</label>
-    <br>
-    <select class="django-select2" id="states" name="states" multiple="multiple" required="required">
-        {% for code,country in countries %}
-            <option value="{{ code }}">{{ country }}</option>
-        {% endfor %}
-    </select>
-
-    <br><br>
-    <label for="metrics_list">Select Metric(s)</label>
-    <br>
-    <select class="django-select2" id="metrics" name="metrics" multiple="multiple" required="required">
-        {%  for code,metric in metrics %}
+        <br><br>
+        <label for="metrics_list">Select Metric(s)</label>
+        <br>
+        <select class="django-select2" id="metrics" name="metrics" multiple="multiple" required="required">
+            {%  for code,metric in metrics %}
             <option value="{{code}}">{{metric}}</option>
         {% endfor %}
-    </select>
+        </select>
 
-    <br><br>
-    <label for="year1">Range of years</label>
-    <input type="number" id="year1" name="year1" min="1960" max="2022" value="1960" required="required"> -
-    <input type="number"  id="year2" name="year2" min="1960" max="2022" value="2021" required="required">
-    <br><br>
-    <label for="title">Graph Title</label>
-    <input type="text" id="title" name="title" value="">
-    <br><br>
-    <label for="xlabel">X-axis Label</label>
-    <input type="text" id="xlabel" name="xlabel" value="">
-    <br><br>
-    <label for="ylabel">Y-axis Label</label>
-    <input id="ylabel" name="ylabel" value="">
-    <br><br>
-    <label for="auto_year">Auto adjust year range</label>
-    <input type="checkbox" id="auto_year" name="auto_year" value="1" checked>
-    <br><br>
+        <br><br>
+        <label for="year1" class="form-label">Range of years</label>
+        <div class="input-group">
+            <input type="number" class="form-control" id="year1" name="year1" min="1960" max="2022" value="1960"
+                   required="required">
+            <span class="input-group-addon" style="padding: 10px">-</span>
+            <input type="number" class="form-control" id="year2" name="year2" min="1960" max="2022" value="2021"
+                   required="required">
+        </div>
 
-    {#    <label for="width">Graph width</label>#}
+        <br>
+        <label for="title" class="form-label">Graph Title</label>
+        <input type="text" class="form-control" id="title" name="title" value="">
+        <br>
+        <label for="xlabel" class="form-label">X-axis Label</label>
+        <input type="text" class="form-control" id="xlabel" name="xlabel" value="">
+        <br>
+        <label for="ylabel" class="form-label">Y-axis Label</label>
+        <input id="ylabel" class="form-control" name="ylabel" value="">
+        <br>
+        <label for="auto_year" class="form-check-label">Auto adjust year range</label>
+        <input type="checkbox" class="form-check-input" id="auto_year" name="auto_year" value="1" checked>
+        <br>
+
+        {#    <label for="width">Graph width</label>#}
     {#    <input type="number" id="width" name="width" min="400" max="2000" value="1000" >#}
     {#    <br><br>#}
     {#    <label for="height">Graph height</label>#}
@@ -85,8 +93,8 @@
     {#    <label for="BW">Black and white mode</label>#}
     {#    <input type="checkbox" id="BW" name="BW" value="0">#}
 
-
-    <input type="submit" class="form-control" value="Make Graph">
+        <input type="submit" class="btn btn-primary mb-3" value="Make Graph">
+    </div>
 </form>
 
 
