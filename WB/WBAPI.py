@@ -52,7 +52,7 @@ def get_data(country_codes, metric_codes, start_year=2000, end_year=2020):
 
 
 def display_graph(DF, country_codes, metric_list, start_year, end_year, title='', xlabel='Year', ylabel='',
-                  height=6, width=30, kind='line', black_and_white=False):
+                  height=7, width=35, kind='line', black_and_white=False):
     country_list = []
     for country in country_codes:  # get the short name of countries
         country_list.append(wb.economy.metadata.get(country).metadata['ShortName'])
@@ -103,6 +103,8 @@ def display_graph(DF, country_codes, metric_list, start_year, end_year, title=''
         )
 
     plt.set_xticks(range(start_year, end_year + 1))  # to remove 0.5 years
+
+    pd.set_option('display.float_format', lambda x: '%.3f' % x)  # to display 3 decimal places
 
     if len(country_list) > 1:
         plt.legend(country_list, loc='upper left', bbox_to_anchor=(1, 1))  # list all countries in the legend
