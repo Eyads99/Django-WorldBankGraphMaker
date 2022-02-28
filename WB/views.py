@@ -66,8 +66,8 @@ def graph(request):
     if xlabel == '':
         xlabel = 'Year'
     ylabel = request.GET['ylabel']
-    # width = reuqest.GET['width']
-    # height = request.GET['height']
+    width = request.GET['width']
+    height = request.GET['height']
     # colors = request.GET.getlist('colors')
     # points = request.GET.getlist('points') #should the points be displayed
 
@@ -75,6 +75,11 @@ def graph(request):
         auto_scale = request.GET['auto_year']
     except:
         auto_scale = False
+
+    try:
+        black_white = request.GET['BW']
+    except:
+        black_white = False
 
     DF = get_data(countries, metrics, start_year, end_year)
     # print(DF)
@@ -105,7 +110,8 @@ def graph(request):
         start_year = min_year
         end_year = max_year
     # create the graph
-    fig = display_graph(DF, countries, metrics, start_year, end_year, title, xlabel, ylabel)
+    fig = display_graph(DF, countries, metrics, start_year, end_year, title, xlabel, ylabel,
+                        black_and_white=black_white)
     # download_graph(fig, 'graph')
     # download_CSV(DF, 'data')
 

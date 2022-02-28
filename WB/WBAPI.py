@@ -43,7 +43,7 @@ def get_data(country_codes, metric_codes, start_year=2000, end_year=2020):
 
     if len(metric_codes) > 1:
         return wb.data.DataFrame(series=metric_codes, economy=country_codes, time=range(start_year, end_year + 1),
-                                 labels=True, numericTimeKeys=True,
+                                 labels=True, index=['time'], numericTimeKeys=True,
                                  timeColumns=True)  # not sure what timeColumns does
     else:
         return wb.data.DataFrame(series=metric_codes, economy=country_codes, time=range(start_year, end_year + 1),
@@ -52,7 +52,7 @@ def get_data(country_codes, metric_codes, start_year=2000, end_year=2020):
 
 
 def display_graph(DF, country_codes, metric_list, start_year, end_year, title='', xlabel='Year', ylabel='',
-                  height=6, width=30, kind='line'):
+                  height=6, width=30, kind='line', black_and_white=False):
     country_list = []
     for country in country_codes:  # get the short name of countries
         country_list.append(wb.economy.metadata.get(country).metadata['ShortName'])
@@ -77,15 +77,30 @@ def display_graph(DF, country_codes, metric_list, start_year, end_year, title=''
         title, ylabel = title.split('(', 1)
         ylabel = ylabel[:-1]  # remove closing bracket
 
-    plt = DF.plot(
-        figsize=(width, height),
-        ls='solid',
-        title=title,
-        xlabel=xlabel,
-        ylabel=ylabel,
-        kind=kind,
-        marker='o',
-    )
+    if black_and_white:
+        # use black for the lines and different markers and line styles
+        style = ['ko-', 'ks--', 'kd-.', 'kx:', 'ko', 'k^', 'kv', 'ks', 'kx', 'kd', 'k+', 'k*', 'kp', 'kh', 'kH', 'kD',
+                 'k.', ]
+        plt = DF.plot(
+            figsize=(width, height),
+            title=title,
+            xlabel=xlabel,
+            ylabel=ylabel,
+            kind=kind,
+            # use multiple markers for each series
+            style=style
+        )
+    else:
+        plt = DF.plot(
+            figsize=(width, height),
+            ls='solid',
+            title=title,
+            xlabel=xlabel,
+            ylabel=ylabel,
+            kind=kind,
+            # use multiple markers for each series
+            marker='o',
+        )
 
     plt.set_xticks(range(start_year, end_year + 1))  # to remove 0.5 years
 
