@@ -80,18 +80,21 @@ def graph(request):
     # print(DF)
     is_data = False  # check if there is data across all countries and metrics
 
+    min_year = end_year
+    max_year = start_year
+
     if auto_scale:
         for country in countries:  # get the first non NaN value in DF across all countries
             for i in range(start_year, end_year):
                 if not pd.isnull(DF[country][i]):
-                    start_year = i if i <= start_year else start_year
+                    min_year = i if i < min_year else min_year
                     is_data = True
                     break
             # set end year to last non NaN Value in the dataframe
             for i in range(end_year, start_year, -1):
                 try:
                     if not pd.isnull(DF[country][i]):
-                        end_year = i if i >= end_year else end_year
+                        max_year = i if i > max_year else max_year
                         break
                 except KeyError:  # if the year is not in the dataframe
                     pass
@@ -99,7 +102,8 @@ def graph(request):
             print('No data available')
             return render(request, 'WB/graph.html',
                           {'error': 'There is no data available for the selected countries and years'})
-
+        start_year = min_year
+        end_year = max_year
     # create the graph
     fig = display_graph(DF, countries, metrics, start_year, end_year, title, xlabel, ylabel)
     # download_graph(fig, 'graph')
