@@ -88,17 +88,21 @@ def graph(request):
     min_year = end_year
     max_year = start_year
 
+    # get the column names in DF
+    cols = list(DF.columns)
+    print(cols)
+
     if auto_scale:
-        for country in countries:  # get the first non NaN value in DF across all countries
+        for col in DF.columns[1:]:  # get the first non NaN value in DF across all countries
             for i in range(start_year, end_year):
-                if not pd.isnull(DF[country][i]):
+                if not pd.isnull(DF[col][i]):
                     min_year = i if i < min_year else min_year
                     is_data = True
                     break
             # set end year to last non NaN Value in the dataframe
             for i in range(end_year, start_year, -1):
                 try:
-                    if not pd.isnull(DF[country][i]):
+                    if not pd.isnull(DF[col][i]):
                         max_year = i if i > max_year else max_year
                         break
                 except KeyError:  # if the year is not in the dataframe
