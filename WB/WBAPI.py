@@ -102,6 +102,9 @@ def display_graph(DF, country_codes, metric_list, start_year, end_year, title=''
             marker='o',
         )
 
+    # remove scientific notation from y-axis
+    plt.ticklabel_format(style='plain', axis='y')
+
     plt.set_xticks(range(start_year, end_year + 1))  # to remove 0.5 years
 
     pd.set_option('display.float_format', lambda x: '%.3f' % x)  # to display 3 decimal places
