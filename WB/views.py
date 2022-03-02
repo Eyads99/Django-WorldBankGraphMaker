@@ -92,13 +92,13 @@ def graph(request):
 
     if auto_scale:
         for col in DF.columns[1:]:  # get the first non NaN value in DF across all countries
-            for i in range(start_year, end_year + 1):
+            for i in range(start_year, min_year):
                 if not pd.isnull(DF[col][i]):
                     min_year = i if i < min_year else min_year
                     is_data = True
                     break
             # set end year to last non NaN Value in the dataframe
-            for i in range(end_year, start_year + 1, -1):
+            for i in range(end_year, max_year + 1, -1):
                 try:
                     if not pd.isnull(DF[col][i]):
                         max_year = i if i > max_year else max_year

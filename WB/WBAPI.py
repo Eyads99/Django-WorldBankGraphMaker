@@ -41,18 +41,18 @@ def get_data(country_codes, metric_codes, start_year=2000, end_year=2020):
         print('Please select a single country and multiple metrics or a single metric and multiple countries')
         # return None
 
-    if len(metric_codes) > 1:
+    if len(metric_codes) > 1 and len(country_codes) > 1:
         return wb.data.DataFrame(series=metric_codes, economy=country_codes, time=range(start_year, end_year + 1),
-                                 labels=True, index=['time'], numericTimeKeys=True,
+                                 labels=True, index=None, numericTimeKeys=True,
                                  timeColumns=True)  # not sure what timeColumns does
-    else:
+    else:  # for multiple countries and metrics
         return wb.data.DataFrame(series=metric_codes, economy=country_codes, time=range(start_year, end_year + 1),
                                  labels=True, index=['time'], numericTimeKeys=True,
                                  timeColumns=True)  # not sure what timeColumns does
 
 
 def display_graph(DF, country_codes, metric_list, start_year, end_year, title='', xlabel='Year', ylabel='',
-                  height=7, width=35, kind='line', black_and_white=False):
+                  height=7, width=35, kind='line', black_and_white=False, ylim=None, xlim=None, ):
     country_list = []
     for country in country_codes:  # get the short name of countries
         country_list.append(wb.economy.metadata.get(country).metadata['ShortName'])
@@ -62,20 +62,53 @@ def display_graph(DF, country_codes, metric_list, start_year, end_year, title=''
     if DF is None or len(DF) == 0 or DF.empty is True:
         return None
 
-    # print(f"DF\n{type(DF)}")
-
     if title == '':  # if no title is given
-        if len(country_list) == 1:
-            title = country_list[0] + ' ' + str(start_year) + '-' + str(end_year) + ' '
-        if len(metric_list) == 1:
-            metric_name = wb.series.metadata.get(metric_list[0])  # add first metric name to title
-            title += metric_name.metadata.get('IndicatorName')
-            print(title)
+        # if len(country_list) == 1:
+        #     title = country_list[0] + ' ' + str(start_year) + '-' + str(end_year) + ' '
+        for country in country_list:  # add a list of all countries to the title
+            title += country + ', '
+        title = title[:-2] + ' ' + str(start_year) + '-' + str(end_year) + ' '
 
-    # get title until first opening bracket saving the first half to title and the second half to ylabel
-    if '(' in title:
-        title, ylabel = title.split('(', 1)
-        ylabel = ylabel[:-1]  # remove closing bracket
+        # if len(metric_list) == 1:
+        #     metric_name = wb.series.metadata.get(metric_list[0])  # add first metric name to title
+        #     title += metric_name.metadata.get('IndicatorName')
+        #     print(title)
+        test_title = title
+
+        metric_name = str(
+            wb.series.metadata.get(metric_list[0]).metadata.get('IndicatorName'))  # add first metric name to title
+        # metric_name #+= metric_name
+        metric_name, original_metric_unit = metric_name.split('(', 1)
+        test_title += metric_name
+        test_title += ', '
+        same_unit = False
+
+        for metric in metric_list[1:]:
+            metric_name = wb.series.metadata.get(metric).metadata.get('IndicatorName')
+            # metric_name += metric_name
+            metric_name, metric_unit = metric_name.split('(', 1)
+            if metric_unit == original_metric_unit:  # if the same unit is found across all metrics, use it as y-label
+                same_unit = True
+            test_title += metric_name
+            test_title += ', '
+        test_title = test_title[:-2]  # remove last comma and space
+        if same_unit is True:
+            ylabel = original_metric_unit
+
+        # get title until first opening bracket saving the first half to title and the second half to ylabel
+        title = test_title
+        # if '(' in title and ylabel == '' and len(metric_list) == 1:  # if no title and ylabel is given
+        #     title, ylabel = title.split('(', 1)
+        #     if ylabel == '':
+        #         ylabel = ylabel[:-1]  # remove closing bracket
+        if len(metric_list) == 1:
+            ylabel = original_metric_unit
+
+    if len(metric_list) > 1 and len(country_list) > 1:
+        DF = DF.T  # transpose the dataframe
+        # prevent no numeric data error
+        DF = DF[2:]
+        # DF = DF.astype(float)
 
     if black_and_white:
         # use black for the lines and different markers and line styles
@@ -90,7 +123,7 @@ def display_graph(DF, country_codes, metric_list, start_year, end_year, title=''
             # use multiple markers for each series
             style=style
         )
-    else:
+    else:  # normal colour mode
         plt = DF.plot(
             figsize=(width, height),
             ls='solid',
@@ -103,13 +136,20 @@ def display_graph(DF, country_codes, metric_list, start_year, end_year, title=''
         )
 
     # remove scientific notation from y-axis
-    plt.ticklabel_format(style='plain', axis='y')
+    plt.ticklabel_format(style='plain', axis='y', useLocale=True)
 
     plt.set_xticks(range(start_year, end_year + 1))  # to remove 0.5 years
 
     pd.set_option('display.float_format', lambda x: '%.3f' % x)  # to display 3 decimal places
 
-    if len(country_list) > 1:
+    if len(country_list) > 1 and len(metric_list) > 1:
+        legend_list = []
+        for country in country_list:
+            for metric in metric_list:
+                legend_list.append(country + ' : ' + metric)
+        plt.legend(legend_list, loc='best')
+
+    elif len(country_list) > 1:
         plt.legend(country_list, loc='upper left', bbox_to_anchor=(1, 1))  # list all countries in the legend
     else:
         metric_labels = [wb.series.metadata.get(metric).metadata.get('IndicatorName') for metric in metric_list]
