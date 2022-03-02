@@ -90,7 +90,10 @@ def display_graph(DF, country_codes, metric_list, start_year, end_year, title=''
         for metric in metric_list[1:]:
             metric_name = wb.series.metadata.get(metric).metadata.get('IndicatorName')
             # metric_name += metric_name
-            metric_name, metric_unit = metric_name.split('(', 1)
+            try:
+                metric_name, metric_unit = metric_name.split('(', 1)
+            except ValueError:
+                metric_unit = ''
             if metric_unit == original_metric_unit:  # if the same unit is found across all metrics, use it as y-label
                 same_unit = True
             test_title += metric_name
@@ -149,8 +152,8 @@ def display_graph(DF, country_codes, metric_list, start_year, end_year, title=''
     if len(country_list) > 1 and len(metric_list) > 1:
         metric_labels = [wb.series.metadata.get(metric).metadata.get('IndicatorName') for metric in metric_list]
         legend_list = []
-        for country in country_list:
-            for metric in metric_labels:
+        for metric in metric_labels:
+            for country in reversed(country_list):
                 legend_list.append(country + ' : ' + metric)
         plt.legend(legend_list, loc='best')
 
