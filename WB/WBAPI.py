@@ -147,9 +147,10 @@ def display_graph(DF, country_codes, metric_list, start_year, end_year, title=''
     pd.set_option('display.float_format', lambda x: '%.3f' % x)  # to display 3 decimal places
 
     if len(country_list) > 1 and len(metric_list) > 1:
+        metric_labels = [wb.series.metadata.get(metric).metadata.get('IndicatorName') for metric in metric_list]
         legend_list = []
         for country in country_list:
-            for metric in metric_list:
+            for metric in metric_labels:
                 legend_list.append(country + ' : ' + metric)
         plt.legend(legend_list, loc='best')
 
