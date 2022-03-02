@@ -44,7 +44,7 @@ def get_data(country_codes, metric_codes, start_year=2000, end_year=2020):
     if len(metric_codes) > 1 and len(country_codes) > 1:
         return wb.data.DataFrame(series=metric_codes, economy=country_codes, time=range(start_year, end_year + 1),
                                  labels=True, index=None, numericTimeKeys=True,
-                                 timeColumns=True)  # not sure what timeColumns does
+                                 timeColumns=True).T  # not sure what timeColumns does
     else:  # for multiple countries and metrics
         return wb.data.DataFrame(series=metric_codes, economy=country_codes, time=range(start_year, end_year + 1),
                                  labels=True, index=['time'], numericTimeKeys=True,
@@ -78,7 +78,11 @@ def display_graph(DF, country_codes, metric_list, start_year, end_year, title=''
         metric_name = str(
             wb.series.metadata.get(metric_list[0]).metadata.get('IndicatorName'))  # add first metric name to title
         # metric_name #+= metric_name
-        metric_name, original_metric_unit = metric_name.split('(', 1)
+        try:
+            metric_name, original_metric_unit = metric_name.split('(', 1)  # if there is a ( in the name
+        except ValueError:  # if there is no ( in the name, except used over if statement as majority of metrics have (
+            original_metric_unit = ''
+
         test_title += metric_name
         test_title += ', '
         same_unit = False
@@ -105,7 +109,7 @@ def display_graph(DF, country_codes, metric_list, start_year, end_year, title=''
             ylabel = original_metric_unit
 
     if len(metric_list) > 1 and len(country_list) > 1:
-        DF = DF.T  # transpose the dataframe
+        # DF = DF.T  # transpose the dataframe
         # prevent no numeric data error
         DF = DF[2:]
         # DF = DF.astype(float)
