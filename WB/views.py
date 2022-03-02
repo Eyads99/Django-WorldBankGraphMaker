@@ -87,10 +87,10 @@ def graph(request):
 
     min_year = end_year
     max_year = start_year
-    # get the column names in DF
-    cols = list(DF.columns)
 
     if auto_scale:
+        if len(countries) > 1 and len(metrics) > 1:
+            DF = DF.T  # transpose the dataframe
         for col in DF.columns[1:]:  # get the first non NaN value in DF across all countries
             for i in range(start_year, min_year):
                 if not pd.isnull(DF[col][i]):
@@ -111,6 +111,8 @@ def graph(request):
                           {'error': 'There is no data available for the selected countries and years'})
         start_year = min_year
         end_year = max_year
+        if len(countries) > 1 and len(metrics) > 1:
+            DF = DF.T  # return the dataframe to its original orientation
     # create the graph
     fig = display_graph(DF, countries, metrics, start_year, end_year, title, xlabel, ylabel,
                         black_and_white=black_white)
