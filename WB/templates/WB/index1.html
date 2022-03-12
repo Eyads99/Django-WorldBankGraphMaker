@@ -1,25 +1,6 @@
-<!-- page with select2 dropdown list with all countries in the world-->
+<html>
 
-<script type="text/javascript">
- $("#e1").select2();
-$("#checkbox").click(function(){
-    if($("#checkbox").is(':checked') ){
-        $("#e1 > option").prop("selected","selected");
-        $("#e1").trigger("change");
-    }else{
-        $("#e1 > option").removeAttr("selected");
-         $("#e1").trigger("change");
-     }
-});
+Source code can be found at <a href="https://eyad.pythonanywhere.com/">https://eyad.pythonanywhere.com/</a>
 
-$("#button").click(function(){
-       alert($("#e1").val());
-});</script>
-
-<select multiple id="e1" style="width:300px">
-        <option value="AL">Alabama</option>
-        <option value="Am">Amalapuram</option>
-        <option value="An">Anakapalli</option>
-        <option value="Ak">Akkayapalem</option>
-        <option value="WY">Wyoming</option>
-    </select>
+Website created by Eyad Shaban
+</html>
