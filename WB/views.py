@@ -3,7 +3,7 @@
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render  # , get_object_or_404
 from .WBAPI import getWBCountries, getWBMetrics, get_data, display_graph, download_graph, \
-    makeHTMLTable  # , download_CSV
+    makeHTMLTable
 from .forms import NameForm
 
 import os
@@ -108,7 +108,7 @@ def graph(request):
         if not is_data:  # check if all data in DF is NaN
             print('No data available')
             return render(request, 'WB/graph.html',
-                          {'error': 'There is no data available for the selected countries and years'})
+                          {'error': 'There is no data available for the selected metrics, countries and years'})
         start_year = min_year
         end_year = max_year
         # if len(countries) > 1 and len(metrics) > 1:
