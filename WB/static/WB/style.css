@@ -1,3 +1,15 @@
-body{
+body {
     background: whitesmoke;
+}
+
+/*style wbgapi */
+
+.wbgapi {
+    border: 1px solid;
+}
+
+wbgapi.table {
+    border-collapse: collapse;
+    border-spacing: 0;
+    border: 1px solid;
 }
