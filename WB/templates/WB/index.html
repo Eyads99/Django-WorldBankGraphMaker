@@ -24,6 +24,8 @@
         $(document).ready(function () {
             $('#metrics').select2({placeholder: "Select a metric", allowClear: true, maximumSelectionLength: 10});
         });
+
+
     </script>
 
     <title>World bank graph maker</title>
@@ -68,13 +70,13 @@
 
         <br>
         <label for="title" class="form-label">Graph Title</label>
-        <input type="text" class="form-control" id="title" name="title" value="">
+        <input type="text" class="form-control" id="title" name="title" value="" placeholder="(auto)">
         <br>
         <label for="xlabel" class="form-label">X-axis Label</label>
-        <input type="text" class="form-control" id="xlabel" name="xlabel" value="">
+        <input type="text" class="form-control" id="xlabel" name="xlabel" value="" placeholder="(auto)">
         <br>
         <label for="ylabel" class="form-label">Y-axis Label</label>
-        <input id="ylabel" class="form-control" name="ylabel" value="">
+        <input id="ylabel" class="form-control" name="ylabel" value="" placeholder="(auto)">
         <br>
 
         <label for="width" class="form-label">Graph width</label>
