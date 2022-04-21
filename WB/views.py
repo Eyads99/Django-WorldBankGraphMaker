@@ -135,6 +135,7 @@ def graph(request):
         'CSV_FILENAME': './../../data.csv',
         'table': makeHTMLTable(DF),
         # 'plt': fig,
+        # 'extra_info': 'This is extra info',
         'DF': DF,
         'CSV': DF.to_csv(index=True, header=True),
     }
