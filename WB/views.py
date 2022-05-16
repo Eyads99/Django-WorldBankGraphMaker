@@ -1,19 +1,17 @@
 # from django.http import Http404
 # from django.template import loader
-from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render  # , get_object_or_404
-from .WBAPI import getWBCountries, getWBMetrics, get_data, display_graph, download_graph, \
-    makeHTMLTable
+from django.http import HttpResponseRedirect
+from django.shortcuts import render
+from django.utils.datastructures import MultiValueDictKeyError
+
+from .WBAPI import getWBCountries, getWBMetrics, get_data, display_graph, makeHTMLTable
 from .forms import NameForm
 
-import os
 from io import BytesIO
 import base64
 import matplotlib
-from wsgiref.util import FileWrapper
 import matplotlib.pyplot as plt
 import pandas as pd
-import csv
 
 matplotlib.use("Agg")
 
@@ -66,19 +64,19 @@ def graph(request):
     if xlabel == '':
         xlabel = 'Year'
     ylabel = request.GET['ylabel']
-    width = request.GET['width']
-    height = request.GET['height']
+    width = float(request.GET['width'])
+    height = float(request.GET['height'])
     # colors = request.GET.getlist('colors')
     # points = request.GET.getlist('points') #should the points be displayed
 
     try:
         auto_scale = request.GET['auto_year']
-    except:
+    except MultiValueDictKeyError:  # if auto year option not selected it will not be sent with the request
         auto_scale = False
 
     try:
         black_white = request.GET['BW']
-    except:
+    except MultiValueDictKeyError:  # if black and white option is not selected
         black_white = False
 
     DF = get_data(countries, metrics, start_year, end_year)
@@ -115,7 +113,7 @@ def graph(request):
         #     DF = DF.T  # return the dataframe to its original orientation
     # create the graph
     fig = display_graph(DF, countries, metrics, start_year, end_year, title, xlabel, ylabel,
-                        black_and_white=black_white)
+                        black_and_white=black_white, height=height, width=width)
     # download_graph(fig, 'graph')
     # download_CSV(DF, 'data')
 
@@ -128,7 +126,8 @@ def graph(request):
     # del DF.time
     DF.reset_index(drop=True, inplace=True)  # removes row of incorrect years
     DF = DF.T
-    # print(DF)
+    DF = DF[list(reversed(DF.columns))]  # flip order of columns in dataframe to start from the oldest year
+    DF.rename(index={'Time': 'Year'}, inplace=True)  # rename first row to Year
 
     context = {
         'GRAPH_IMG': image_base64,
@@ -137,7 +136,7 @@ def graph(request):
         # 'plt': fig,
         # 'extra_info': 'This is extra info',
         'DF': DF,
-        'CSV': DF.to_csv(index=True, header=True),
+        'CSV': ',' + (DF.to_csv(index=True, header=True)).split('\n', 1)[1]  # removes numbered cols on the first line
     }
 
     return render(request, 'WB/graph.html', context)

@@ -57,8 +57,6 @@ def display_graph(DF, country_codes, metric_list, start_year, end_year, title=''
     for country in country_codes:  # get the short name of countries
         country_list.append(wb.economy.metadata.get(country).metadata['ShortName'])
 
-    # print(country_list)
-
     if DF is None or len(DF) == 0 or DF.empty is True:
         return None
 
@@ -80,7 +78,7 @@ def display_graph(DF, country_codes, metric_list, start_year, end_year, title=''
         # metric_name #+= metric_name
         try:
             metric_name, original_metric_unit = metric_name.split('(', 1)  # if there is a ( in the name
-        except ValueError:  # if there is no ( in the name, except used over if statement as majority of metrics have (
+        except ValueError:  # if there is no ( in the name, except used over if statement as most metrics have (
             original_metric_unit = ''
 
         test_title += metric_name
@@ -100,7 +98,7 @@ def display_graph(DF, country_codes, metric_list, start_year, end_year, title=''
             test_title += ', '
         test_title = test_title[:-2]  # remove last comma and space
         if same_unit is True:
-            ylabel = original_metric_unit
+            ylabel = original_metric_unit.replace(')', '')
 
         # get title until first opening bracket saving the first half to title and the second half to ylabel
         title = test_title
@@ -109,7 +107,7 @@ def display_graph(DF, country_codes, metric_list, start_year, end_year, title=''
         #     if ylabel == '':
         #         ylabel = ylabel[:-1]  # remove closing bracket
         if len(metric_list) == 1:
-            ylabel = original_metric_unit
+            ylabel = original_metric_unit.replace(')', '')
 
     if len(metric_list) > 1 and len(country_list) > 1:
         # DF = DF.T  # transpose the dataframe
@@ -169,7 +167,7 @@ def display_graph(DF, country_codes, metric_list, start_year, end_year, title=''
 
 
 def download_graph(plt, file_name='plot', location='', file_format='png'):
-    file_name = file_name + '.' + file_format  # download the graph as a png file
+    file_name = location + file_name + '.' + file_format  # download the graph as a png file
     plt.figure.savefig(file_name, bbox_inches='tight')
 
 

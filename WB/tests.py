@@ -22,8 +22,6 @@ class TestViews(TestCase):
                                          'height': '7', 'black_white': '0'})
         self.assertEqual(response.status_code, 200)
 
-    # tests below are new
-
     def test_black_white(self):
         response = self.client.get(reverse('WB:graph'),
                                    data={'states': 'EGY', 'metrics': 'NY.GDP.MKTP.CD', 'year1': '1960', 'year2': '2021',

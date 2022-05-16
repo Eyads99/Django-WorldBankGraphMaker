@@ -24,8 +24,6 @@
         $(document).ready(function () {
             $('#metrics').select2({placeholder: "Select a metric", allowClear: true, maximumSelectionLength: 10});
         });
-
-
     </script>
 
     <title>World bank graph maker</title>
@@ -33,8 +31,8 @@
 <body>
 <div style="margin: 25px">
     <h1>World Bank graph maker</h1>
-    This tool can help you quickly make graphs using the World bank's extensive databases<br>
-    <a href="{% url 'WB:index1' %}">Index</a>
+    This tool can help you quickly make graphs using the World Bank's extensive databases<br>
+    <a href="{% url 'WB:index1' %}">Extra Info</a>
 </div>
 
 <form action="{% url 'WB:graph' %}" id="WBgraph" method="get">
@@ -49,7 +47,7 @@
         </select>
 
         <br><br>
-        <label for="metrics_list">Select Metric(s)</label>
+        <label for="metrics">Select Metric(s)</label>
         <br>
         <select class="django-select2" style="width: 430px" id="metrics" name="metrics" multiple="multiple"
                 required="required">
@@ -80,18 +78,20 @@
         <br>
 
         <label for="width" class="form-label">Graph width</label>
-        <input type="number" class="form-control" id="width" name="width" min="1" value="30">
+        <input type="number" class="form-control" id="width" name="width" min="1" value="35">
         <br>
         <label for="height" class="form-label">Graph height</label>
-        <input type="number" class="form-control" id="height" name="height" min="1" value="6">
+        <input type="number" class="form-control" id="height" name="height" min="1" value="7">
         <br>
+        {#        width and height were 30 & 6    #}
+
 
         <label for="BW">Black and white mode</label>
         <input type="checkbox" id="BW" name="BW" value="0">
         <br>
         {#    <label for="color">Pick a primary graph colour</label>#}
-    {#    <input type="color" name="color" id="color">#}
-    {#    <br><br>#}
+        {#    <input type="color" name="color" id="color">#}
+        {#    <br><br>#}
 
 
         <label for="auto_year" class="form-check-label">Auto adjust year range</label>
@@ -100,7 +100,6 @@
         <input type="submit" class="btn btn-primary mb-3" value="Make Graph">
     </div>
 </form>
-
 
 </body>
 </html>
