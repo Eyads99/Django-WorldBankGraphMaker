@@ -18,11 +18,11 @@
 
     <script>
         $(document).ready(function () {
-            $('#states').select2({placeholder: "Select a country", allowClear: true, maximumSelectionLength: 10});
+            $('#states').select2({placeholder: "Select a country", allowClear: true, maximumSelectionLength: 8});
         });
 
         $(document).ready(function () {
-            $('#metrics').select2({placeholder: "Select a metric", allowClear: true, maximumSelectionLength: 10});
+            $('#metrics').select2({placeholder: "Select a metric", allowClear: true, maximumSelectionLength: 8});
         });
     </script>
 
@@ -40,7 +40,7 @@
         <label for="states">Select Countries</label>
         <br>
         <select class="django-select2" style="width: 430px" id="states" name="states" multiple="multiple"
-                required="required" max>
+                required="required">
             {% for code,country in countries %}
                 <option value="{{ code }}">{{ country }}</option>
             {% endfor %}
