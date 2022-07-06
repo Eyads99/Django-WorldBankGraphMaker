@@ -147,7 +147,7 @@ def display_graph(DF, country_codes, metric_list, start_year, end_year, title=''
 
     pd.set_option('display.float_format', lambda x: '%.3f' % x)  # to display 3 decimal places
 
-    if len(country_list) > 1 and len(metric_list) > 1:
+    if len(country_list) > 1 and len(metric_list) > 1:  # if multiple countries and indicators
         metric_labels = [wb.series.metadata.get(metric).metadata.get('IndicatorName') for metric in metric_list]
         legend_list = []
         for metric in metric_labels:
@@ -155,13 +155,18 @@ def display_graph(DF, country_codes, metric_list, start_year, end_year, title=''
                 legend_list.append(country + ' : ' + metric)
         plt.legend(legend_list, loc='best')
 
-    elif len(country_list) > 1:
+    elif len(country_list) > 1:  # if multiple countries only
         plt.legend(country_list, loc='upper left', bbox_to_anchor=(1, 1))  # list all countries in the legend
     else:
         metric_labels = [wb.series.metadata.get(metric).metadata.get('IndicatorName') for metric in metric_list]
         plt.legend(metric_labels, loc='upper left', bbox_to_anchor=(1, 1))
 
     plt.bbox_inches = 'tight'  # to remove whitespace around the graph
+
+    # if there is a negative value add dashed line at 0 on Y-axis
+    if DF.min(numeric_only=True).min() < 0:
+        plt.axhline(y=0, color='black', linestyle='dotted')
+
     # plt.figure.show()
     return plt
 
