@@ -156,4 +156,4 @@ def graph(request):
 
 
 def index1(request):
-    return render(request, 'WB/index1.html')
+    return render(request, 'WB/info.html')
