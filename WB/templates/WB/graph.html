@@ -6,19 +6,13 @@
           integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
-    <script>
-        $("#clickme").click(function () {
-            $("#hidden").show();
-        });
-    </script>
 
     <title>Graph</title>
 </head>
 
 <body>
 
-
-{% if error == 'There is no data available for the selected metrics, countries and years' %}
+{% if error %}
     <h2>{{ error }}</h2>
     <script>
         document.write('<a href="' + document.referrer + '">Click me to go back to the previous page</a>');
@@ -33,16 +27,23 @@
     <a class="button" href="data:text/csv; {{ CSV }}" download="data.csv">Download CSV file</a>
     <br>
 
-    {##}
-    {#    <p style="color: #4545ba" id="clickme">Click to see the table and more info</p>#}
-    {#    <div id="hidden" hidden> Extra info:#}
-    {#        <div style="border: 1px solid black;">#}
-    {#            {{ table|safe }}#}
-    {#        </div>#}
-    {#    </div>#}
+    <button style="color: #4545ba" id="clickme">Click to see the table and more info</button>
+    <div class="table table-striped" id="table" style=" display: none;">
+        {#            Extra info:#}
+        {{ table|safe }}
+    </div>
 
-
-
+    <script>
+        const TABLE = document.getElementById("table");
+        const btn = document.getElementById("clickme");
+        btn.onclick = function () {
+            if (TABLE.style.display !== "none") {
+                TABLE.style.display = "none";
+            } else {
+                TABLE.style.display = "block";
+            }
+        };
+    </script>
 
     <!--try with ajax-->
 {% endif %}

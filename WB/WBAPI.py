@@ -183,6 +183,7 @@ def download_CSV(dataFrame, file_name='data'):
 
 
 def makeHTMLTable(dataFrame):
+    table = wb.htmlTable(dataFrame)
     return wb.htmlTable(dataFrame)
 
 
