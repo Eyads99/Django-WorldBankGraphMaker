@@ -79,7 +79,11 @@ def graph(request):
     except MultiValueDictKeyError:  # if black and white option is not selected
         black_white = False
 
-    DF = get_data(countries, metrics, start_year, end_year)
+    try:
+        DF = get_data(countries, metrics, start_year, end_year)  # try to get data from WB API
+    except:
+        return render(request, 'WB/graph.html',
+                      {'error': "There is a connection error with the World Bank's servers, please try again later. "})
     # print(DF)
     is_data = False  # check if there is data across all countries and metrics
 
