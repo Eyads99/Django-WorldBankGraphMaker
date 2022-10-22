@@ -118,7 +118,7 @@ def graph(request):
     # create the graph
     fig = display_graph(DF, countries, metrics, start_year, end_year, title, xlabel, ylabel,
                         black_and_white=black_white, height=height, width=width)
-    # download_graph(fig, 'graph')
+    # # download_graph(fig, 'graph')
     # download_CSV(DF, 'data')
 
     buf = BytesIO()

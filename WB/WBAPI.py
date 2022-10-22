@@ -184,7 +184,8 @@ def download_CSV(dataFrame, file_name='data'):
 
 def makeHTMLTable(dataFrame):
     table = wb.htmlTable(dataFrame)
-    return wb.htmlTable(dataFrame)
+    table = table.replace('<div class="wbgapi"', '<div class="table"')  # change tale class to use bootstrap
+    return table  # wb.htmlTable(dataFrame)
 
 
 def get_three_letter_country_codes(country_list):
