@@ -25,11 +25,11 @@
     <a href="data:image/png;base64, {{ GRAPH_IMG }}" download="graph.png">Download Graph</a>
     <br>
     <a class="button" href="data:text/csv; {{ CSV }}" download="data.csv">Download CSV file</a>
-    <br>
+    <br><br>
 
     <button style="color: #4545ba" id="clickme">Click to see the table and more info</button>
     <div class="table table-striped" id="table" style=" display: none;">
-        {#            Extra info:#}
+        {#            Extra info: make a better table  #}
         {{ table|safe }}
     </div>
 
