@@ -146,18 +146,5 @@ def graph(request):
     return render(request, 'WB/graph.html', context)
 
 
-# def download_CSV(request, DF: pd.core.frame.DataFrame):
-#     filename = 'data.csv'
-#     response = HttpResponse(DF, content_type='text/csv')
-#     response['Content-Disposition'] = 'attachment; filename=data.csv'
-#
-#
-#     return response
-#     # content = FileWrapper(filename)
-#     # response = HttpResponse(content, content_type='application/csv')
-#     # response['Content-Length'] = os.path.getsize(filename)
-#     # response['Content-Disposition'] = 'attachment; filename=%s' % 'faults.pdf'
-
-
 def render_info(request):
     return render(request, 'WB/info.html')
