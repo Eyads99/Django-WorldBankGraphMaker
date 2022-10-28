@@ -159,5 +159,5 @@ def graph(request):
 #     # response['Content-Disposition'] = 'attachment; filename=%s' % 'faults.pdf'
 
 
-def index1(request):
+def render_info(request):
     return render(request, 'WB/info.html')
