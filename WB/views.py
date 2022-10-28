@@ -5,6 +5,7 @@ from django.shortcuts import render
 from django.utils.datastructures import MultiValueDictKeyError
 
 from .WBAPI import getWBCountries, getWBMetrics, get_data, display_graph, makeHTMLTable
+from .bokehGraph import make_bokeh_graph
 from .forms import NameForm
 
 from io import BytesIO
@@ -116,8 +117,8 @@ def graph(request):
         # if len(countries) > 1 and len(metrics) > 1:
         #     DF = DF.T  # return the dataframe to its original orientation
     # create the graph
-    fig = display_graph(DF, countries, metrics, start_year, end_year, title, xlabel, ylabel,
-                        black_and_white=black_white, height=height, width=width)
+    # fig = display_graph(DF, countries, metrics, start_year, end_year, title, xlabel, ylabel,
+    #                    black_and_white=black_white, height=height, width=width)
     # # download_graph(fig, 'graph')
     # download_CSV(DF, 'data')
 
@@ -134,6 +135,7 @@ def graph(request):
     DF.rename(index={'Time': 'Year'}, inplace=True)  # rename first row to Year
 
     context = {
+        'BOKEH_GRAPH': make_bokeh_graph(DF, countries, metrics),
         'GRAPH_IMG': image_base64,
         'CSV_FILENAME': './../../data.csv',
         'table': makeHTMLTable(DF),

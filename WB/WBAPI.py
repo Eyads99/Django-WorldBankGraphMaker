@@ -65,8 +65,9 @@ def get_data(country_codes, metric_codes, start_year=2000, end_year=2020):
 
 
 def display_graph(DF, country_codes, metric_list, start_year, end_year, title='', xlabel='Year', ylabel='',
-                  height=7, width=35, kind='line', black_and_white=False, ylim=None, xlim=None, ):
+                  height=7, width=35, kind='line', black_and_white=False, ylim=None, xlim=None):
     """
+    make matpot graph
     :param DF:
     :param country_codes:
     :param metric_list:
@@ -117,7 +118,7 @@ def display_graph(DF, country_codes, metric_list, start_year, end_year, title=''
         if len(metric_list) == 1:
             ylabel = original_metric_unit.replace(')', '')
 
-    if len(metric_list) > 1 and len(country_list) > 1:
+    if len(metric_list) > 1 and len(country_list) > 1:  # if there are multiple metrics and countries
         # DF = DF.T  # transpose the dataframe
         # prevent no numeric data error
         DF = DF[2:]
