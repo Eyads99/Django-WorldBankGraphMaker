@@ -67,7 +67,7 @@ def get_data(country_codes, metric_codes, start_year=2000, end_year=2020):
 def display_graph(DF, country_codes, metric_list, start_year, end_year, title='', xlabel='Year', ylabel='',
                   height=7, width=35, kind='line', black_and_white=False, ylim=None, xlim=None):
     """
-    make matpot graph
+    make matplot graph
     :param DF:
     :param country_codes:
     :param metric_list:
