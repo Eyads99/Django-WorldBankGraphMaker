@@ -117,8 +117,8 @@ def graph(request):
         # if len(countries) > 1 and len(metrics) > 1:
         #     DF = DF.T  # return the dataframe to its original orientation
     # create the graph
-    # fig = display_graph(DF, countries, metrics, start_year, end_year, title, xlabel, ylabel,
-    #                    black_and_white=black_white, height=height, width=width)
+    fig = display_graph(DF, countries, metrics, start_year, end_year, title, xlabel, ylabel,
+                        black_and_white=black_white, height=height, width=width)
     # # download_graph(fig, 'graph')
     # download_CSV(DF, 'data')
 
@@ -134,8 +134,13 @@ def graph(request):
     DF = DF[list(reversed(DF.columns))]  # flip order of columns in dataframe to start from the oldest year
     DF.rename(index={'Time': 'Year'}, inplace=True)  # rename first row to Year
 
+    bokeh_script, bokeh_div, inline_resource = make_bokeh_graph(DF, countries,
+                                                                metrics)  # get bokeh JS and HTML code for viewer
+
     context = {
-        'BOKEH_GRAPH': make_bokeh_graph(DF, countries, metrics),
+        'BOKEH_SCRIPT': bokeh_script,
+        'BOKEH_DIV': bokeh_div,
+        'resources': inline_resource,
         'GRAPH_IMG': image_base64,
         'CSV_FILENAME': './../../data.csv',
         'table': makeHTMLTable(DF),
