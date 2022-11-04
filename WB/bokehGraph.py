@@ -8,13 +8,12 @@ import pandas as pd
 
 def make_bokeh_graph(DF, country_codes, metric_list, start_year=1960, end_year=2020, title='', xlabel='Year', ylabel='',
                      height=7, width=35, kind='line', black_and_white=False, ylim=None, xlim=None):
-    pass
-
     source = ColumnDataSource({str(c): v.values for c, v in DF.transpose().items()})
 
-    p = figure(title=title, x_axis_label=xlabel, y_axis_label=ylabel, x_axis_type="datetime")
-
-    p.line(line_width=2, source=source)
+    p = figure(title=title, x_axis_label=xlabel, y_axis_label=ylabel)
+    p.title.text_color = "Gray"
+    p.line(x=source.column_names[0], y=source.column_names[1], line_width=2, source=source)  # to make line graph
+    p.circle(x=source.column_names[0], y=source.column_names[1], source=source)  # to put dots on the line graph
 
     script, div = components(p)
 
