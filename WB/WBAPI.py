@@ -84,39 +84,17 @@ def display_graph(DF, country_codes, metric_list, start_year, end_year, title=''
     :param xlim:
     :return:
     """
-    country_list = []
-    for country in country_codes:  # get the short name of countries
-        country_list.append(wb.economy.metadata.get(country).metadata['ShortName'])
+
+    country_list = [wb.economy.metadata.get(country).metadata['ShortName'] for country in country_codes]
 
     if DF is None or len(DF) == 0 or DF.empty is True:
         return None
 
     if title == '':  # if no title is given
 
-        title = make_title(country_list, metric_list, start_year, end_year)
+        title = make_title(country_codes, metric_list, start_year, end_year)
 
-        same_unit = False
-        metric_name = str(
-            wb.series.metadata.get(metric_list[0]).metadata.get('IndicatorName'))  # add first metric name to title
-        try:
-            metric_name, original_metric_unit = metric_name.split('(', 1)  # if there is a ( in the name
-        except ValueError:  # if there is no ( in the name, except used over if statement as most metrics have (
-            original_metric_unit = ''
-
-        for metric in metric_list[1:]:
-            metric_name = wb.series.metadata.get(metric).metadata.get('IndicatorName')
-            try:
-                metric_name, metric_unit = metric_name.split('(', 1)
-            except ValueError:
-                metric_unit = ''
-            if metric_unit == original_metric_unit:  # if the same unit is found across all metrics, use it as y-label
-                same_unit = True
-
-        if same_unit is True:
-            ylabel = original_metric_unit.replace(')', '')
-
-        if len(metric_list) == 1:
-            ylabel = original_metric_unit.replace(')', '')
+        ylabel = get_ylabel(metric_list, ylabel)
 
     if len(metric_list) > 1 and len(country_list) > 1:  # if there are multiple metrics and countries
         # DF = DF.T  # transpose the dataframe
@@ -180,8 +158,36 @@ def display_graph(DF, country_codes, metric_list, start_year, end_year, title=''
     return plt
 
 
-def make_title(country_list, metric_list, start_year, end_year):
+def get_ylabel(metric_list, ylabel=""):
+    if ylabel != "":
+        return ylabel
+
+    same_unit = False
+    metric_name = str(
+        wb.series.metadata.get(metric_list[0]).metadata.get('IndicatorName'))  # add first metric name to title
+    try:
+        metric_name, original_metric_unit = metric_name.split('(', 1)  # if there is a ( in the name
+    except ValueError:  # if there is no ( in the name, except used over if statement as most metrics have (
+        original_metric_unit = ''
+    for metric in metric_list[1:]:
+        metric_name = wb.series.metadata.get(metric).metadata.get('IndicatorName')
+        try:
+            metric_name, metric_unit = metric_name.split('(', 1)
+        except ValueError:
+            metric_unit = ''
+        if metric_unit == original_metric_unit:  # if the same unit is found across all metrics, use it as y-label
+            same_unit = True
+    if same_unit is True:
+        ylabel = original_metric_unit.replace(')', '')
+    if len(metric_list) == 1:
+        ylabel = original_metric_unit.replace(')', '')
+    return ylabel
+
+
+def make_title(country_codes, metric_list, start_year, end_year):
     title = ""
+    country_list = [wb.economy.metadata.get(country).metadata['ShortName'] for country in
+                    country_codes]  # make list of country names form their codes
     for country in country_list:  # add a list of all countries to the title
         title += country + ', '
     title = title[:-2] + ' ' + str(start_year) + '-' + str(end_year) + ' '

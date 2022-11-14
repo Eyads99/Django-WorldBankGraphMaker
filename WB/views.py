@@ -4,7 +4,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.utils.datastructures import MultiValueDictKeyError
 
-from .WBAPI import getWBCountries, getWBMetrics, get_data, display_graph, makeHTMLTable
+from .WBAPI import getWBCountries, getWBMetrics, get_data, display_graph, makeHTMLTable, make_title, get_ylabel
 from .bokehGraph import make_bokeh_graph
 from .forms import NameForm
 
@@ -134,8 +134,11 @@ def graph(request):
     DF = DF[list(reversed(DF.columns))]  # flip order of columns in dataframe to start from the oldest year
     DF.rename(index={'Time': 'Year'}, inplace=True)  # rename first row to Year
 
-    bokeh_script, bokeh_div, inline_resource = make_bokeh_graph(DF, countries,
-                                                                metrics)  # get bokeh JS and HTML code for viewer
+    bokeh_script, bokeh_div, inline_resource = make_bokeh_graph(DF=DF, country_codes=countries, metric_list=metrics,
+                                                                ylabel=get_ylabel(metrics, ylabel),
+                                                                title=make_title(countries, metrics, start_year,
+                                                                                 end_year))  # get bokeh JS and HTML
+    # code for viewer
 
     context = {
         'BOKEH_SCRIPT': bokeh_script,
