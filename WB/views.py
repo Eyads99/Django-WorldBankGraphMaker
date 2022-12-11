@@ -112,13 +112,13 @@ def graph(request):
             print('No data available')
             return render(request, 'WB/graph.html',
                           {'error': 'There is no data available for the selected metrics, countries and years'})
-        start_year = min_year
-        end_year = max_year
+        # start_year = min_year
+        # end_year = max_year
         # if len(countries) > 1 and len(metrics) > 1:
         #     DF = DF.T  # return the dataframe to its original orientation
     # create the graph
-    fig = display_graph(DF, countries, metrics, start_year, end_year, title, xlabel, ylabel,
-                        black_and_white=black_white, height=height, width=width)
+    # fig = display_graph(DF, countries, metrics, min_year, max_year, title, xlabel, ylabel,
+    #                    black_and_white=black_white, height=height, width=width)
     # # download_graph(fig, 'graph')
     # download_CSV(DF, 'data')
 
@@ -137,7 +137,9 @@ def graph(request):
     bokeh_script, bokeh_div, inline_resource = make_bokeh_graph(DF=DF, country_codes=countries, metric_list=metrics,
                                                                 ylabel=get_ylabel(metrics, ylabel),
                                                                 title=make_title(countries, metrics, start_year,
-                                                                                 end_year))  # get bokeh JS and HTML
+                                                                                 end_year),
+                                                                start_year=start_year,
+                                                                end_year=end_year)  # get bokeh JS and HTML
     # code for viewer
 
     context = {

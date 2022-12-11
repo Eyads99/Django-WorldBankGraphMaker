@@ -134,6 +134,7 @@ def display_graph(DF, country_codes, metric_list, start_year, end_year, title=''
 
     pd.set_option('display.float_format', lambda x: '%.3f' % x)  # to display 3 decimal places
 
+    #  make appropriate legend
     if len(country_list) > 1 and len(metric_list) > 1:  # if multiple countries and indicators
         metric_labels = [wb.series.metadata.get(metric).metadata.get('IndicatorName') for metric in metric_list]
         legend_list = []
