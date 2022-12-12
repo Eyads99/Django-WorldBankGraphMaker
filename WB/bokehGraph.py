@@ -25,22 +25,24 @@ def make_bokeh_graph(DF, country_codes, metric_list, start_year=1960, end_year=2
 
     p = figure(title=title, x_axis_label=xlabel, y_axis_label=ylabel)
 
-    if source.column_names[0] is "Year":
+    if source.column_names[0] == "Year":
         for idx, data in enumerate(source.column_names[1:]):  # first row is year
             p.line(x=source.column_names[0], y=data, line_width=2, source=source,
-                   legend_label=data, color=Category10[10][idx])  # to make line graph
+                   legend_label=make_legend_title(data, len(country_codes) > 1, len(metric_list) > 1),
+                   color=Category10[10][idx])  # to make line graph
             p.circle(x=source.column_names[0], y=data, source=source,
-                     legend_label=data, color=Category10[10][idx])  # to put dots on the line graph
+                     legend_label=make_legend_title(data), color=Category10[10][idx])  # to put dots on the line graph
 
         p.line(x=source.column_names[0], y=source.column_names[1], line_width=2,
                source=source)  # to display line graph
         p.circle(x=source.column_names[0], y=source.column_names[1], source=source)  # to put dots on the line graph
-    else:
+    else:  # multiple countries and metrics
         for idx, data in enumerate(source.column_names[:-1]):
             p.line(x=source.column_names[-1], y=data, line_width=2, source=source,
-                   legend_label=data, color=Category10[10][idx])  # to make line graph
+                   legend_label=make_legend_title(data, True, True), color=Category10[10][idx])  # to make line graph
             p.circle(x=source.column_names[-1], y=data, source=source,
-                     legend_label=data, color=Category10[10][idx])  # to put dots on the line graph
+                     legend_label=make_legend_title(data, True, True),
+                     color=Category10[10][idx])  # to put dots on the line graph
 
     p.yaxis.formatter = BasicTickFormatter(use_scientific=False, precision=2)  # prevent use of scientific notation
 
@@ -50,6 +52,16 @@ def make_bokeh_graph(DF, country_codes, metric_list, start_year=1960, end_year=2
     return script, div, INLINE.render()
 
 
-def make_legend_title(data, multiple_countries, multiple_metrics):  # TODO
+def make_legend_title(data, multiple_countries=False, multiple_metrics=False) -> str:  # TODO read country code & metric
 
-    pass
+    if multiple_countries and multiple_metrics:  # if multiple countries and indicators
+        data = data.replace("(", "").replace(')', '').replace("'", "").replace(" ",
+                                                                               "")  # remove apostrophes and brackets
+        title = data.split(',')  # split title elements by comma
+        return wb.economy.metadata.get(title[0]).metadata['ShortName'] + ": " \
+            + wb.series.metadata.get(title[1]).metadata.get('IndicatorName')
+
+    elif multiple_metrics:  # if multiple countries only
+        return wb.series.metadata.get(data).metadata.get('IndicatorName')  # return metric name
+    else:
+        return wb.economy.metadata.get(data).metadata['ShortName']  # return country name
