@@ -117,9 +117,9 @@ def graph(request):
         # if len(countries) > 1 and len(metrics) > 1:
         #     DF = DF.T  # return the dataframe to its original orientation
     # create the graph
-    # fig = display_graph(DF, countries, metrics, min_year, max_year, title, xlabel, ylabel,
-    #                    black_and_white=black_white, height=height, width=width)
-    # # download_graph(fig, 'graph')
+    fig = display_graph(DF, countries, metrics, min_year, max_year, title, xlabel, ylabel,
+                        black_and_white=black_white, height=height, width=width)
+    # download_graph(fig, 'graph')
     # download_CSV(DF, 'data')
 
     buf = BytesIO()
