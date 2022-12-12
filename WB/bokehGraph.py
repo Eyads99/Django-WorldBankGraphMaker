@@ -31,7 +31,8 @@ def make_bokeh_graph(DF, country_codes, metric_list, start_year=1960, end_year=2
                    legend_label=make_legend_title(data, len(country_codes) > 1, len(metric_list) > 1),
                    color=Category10[10][idx])  # to make line graph
             p.circle(x=source.column_names[0], y=data, source=source,
-                     legend_label=make_legend_title(data), color=Category10[10][idx])  # to put dots on the line graph
+                     legend_label=make_legend_title(data, len(country_codes) > 1, len(metric_list) > 1),
+                     color=Category10[10][idx])  # to put dots on the line graph
 
         p.line(x=source.column_names[0], y=source.column_names[1], line_width=2,
                source=source)  # to display line graph
