@@ -4,7 +4,8 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.utils.datastructures import MultiValueDictKeyError
 
-from .WBAPI import getWBCountries, getWBMetrics, get_data, display_graph, makeHTMLTable
+from .WBAPI import getWBCountries, getWBMetrics, get_data, display_graph, makeHTMLTable, make_title, get_ylabel
+from .bokehGraph import make_bokeh_graph
 from .forms import NameForm
 
 from io import BytesIO
@@ -111,14 +112,14 @@ def graph(request):
             print('No data available')
             return render(request, 'WB/graph.html',
                           {'error': 'There is no data available for the selected metrics, countries and years'})
-        start_year = min_year
-        end_year = max_year
+        # start_year = min_year
+        # end_year = max_year
         # if len(countries) > 1 and len(metrics) > 1:
         #     DF = DF.T  # return the dataframe to its original orientation
     # create the graph
-    fig = display_graph(DF, countries, metrics, start_year, end_year, title, xlabel, ylabel,
+    fig = display_graph(DF, countries, metrics, min_year, max_year, title, xlabel, ylabel,
                         black_and_white=black_white, height=height, width=width)
-    # # download_graph(fig, 'graph')
+    # download_graph(fig, 'graph')
     # download_CSV(DF, 'data')
 
     buf = BytesIO()
@@ -133,7 +134,18 @@ def graph(request):
     DF = DF[list(reversed(DF.columns))]  # flip order of columns in dataframe to start from the oldest year
     DF.rename(index={'Time': 'Year'}, inplace=True)  # rename first row to Year
 
+    bokeh_script, bokeh_div, inline_resource = make_bokeh_graph(DF=DF, country_codes=countries, metric_list=metrics,
+                                                                ylabel=get_ylabel(metrics, ylabel),
+                                                                title=make_title(countries, metrics, start_year,
+                                                                                 end_year),
+                                                                start_year=start_year,
+                                                                end_year=end_year)  # get bokeh JS and HTML
+    # code for viewer
+
     context = {
+        'BOKEH_SCRIPT': bokeh_script,
+        'BOKEH_DIV': bokeh_div,
+        'resources': inline_resource,
         'GRAPH_IMG': image_base64,
         'CSV_FILENAME': './../../data.csv',
         'table': makeHTMLTable(DF),
@@ -144,19 +156,6 @@ def graph(request):
     }
 
     return render(request, 'WB/graph.html', context)
-
-
-# def download_CSV(request, DF: pd.core.frame.DataFrame):
-#     filename = 'data.csv'
-#     response = HttpResponse(DF, content_type='text/csv')
-#     response['Content-Disposition'] = 'attachment; filename=data.csv'
-#
-#
-#     return response
-#     # content = FileWrapper(filename)
-#     # response = HttpResponse(content, content_type='application/csv')
-#     # response['Content-Length'] = os.path.getsize(filename)
-#     # response['Content-Disposition'] = 'attachment; filename=%s' % 'faults.pdf'
 
 
 def render_info(request):

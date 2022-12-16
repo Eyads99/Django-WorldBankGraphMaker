@@ -4,6 +4,9 @@ import pandas as pd
 
 
 def getWBCountries() -> dict:
+    """
+    Makes a dict of all countries IDs and names
+    """
     countries = {}  # make a list of countries
     for el in wb.economy.info().__dict__['items']:
         # countries.append((el['id'], el['value']))
@@ -12,6 +15,9 @@ def getWBCountries() -> dict:
 
 
 def getWBMetrics() -> dict:
+    """
+    Makes a dict of all metrics IDs and names
+    """
     metrics = {}  # make a list of metrics
     for el in wb.series.info().__dict__['items']:
         # metrics.append((el['id'], el['value']))
@@ -19,8 +25,15 @@ def getWBMetrics() -> dict:
     return metrics
 
 
-# defining function to get data from API
 def get_data(country_codes, metric_codes, start_year=2000, end_year=2020):
+    """
+    defining function to get data from API
+    :param country_codes:
+    :param metric_codes:
+    :param start_year:
+    :param end_year:
+    :return: World Bank DataFrame
+    """
     if len(country_codes) == 0:
         print('No countries selected')
         return None
@@ -52,64 +65,38 @@ def get_data(country_codes, metric_codes, start_year=2000, end_year=2020):
 
 
 def display_graph(DF, country_codes, metric_list, start_year, end_year, title='', xlabel='Year', ylabel='',
-                  height=7, width=35, kind='line', black_and_white=False, ylim=None, xlim=None, ):
-    country_list = []
-    for country in country_codes:  # get the short name of countries
-        country_list.append(wb.economy.metadata.get(country).metadata['ShortName'])
+                  height=7, width=35, kind='line', black_and_white=False, ylim=None, xlim=None):
+    """
+    make matplot graph
+    :param DF:
+    :param country_codes:
+    :param metric_list:
+    :param start_year:
+    :param end_year:
+    :param title:
+    :param xlabel:
+    :param ylabel:
+    :param height:
+    :param width:
+    :param kind:
+    :param black_and_white:
+    :param ylim:
+    :param xlim:
+    :return:
+    """
+
+    country_list = [wb.economy.metadata.get(country).metadata['ShortName'] for country in country_codes]
 
     if DF is None or len(DF) == 0 or DF.empty is True:
         return None
 
     if title == '':  # if no title is given
-        # if len(country_list) == 1:
-        #     title = country_list[0] + ' ' + str(start_year) + '-' + str(end_year) + ' '
-        for country in country_list:  # add a list of all countries to the title
-            title += country + ', '
-        title = title[:-2] + ' ' + str(start_year) + '-' + str(end_year) + ' '
 
-        # if len(metric_list) == 1:
-        #     metric_name = wb.series.metadata.get(metric_list[0])  # add first metric name to title
-        #     title += metric_name.metadata.get('IndicatorName')
-        #     print(title)
-        test_title = title
+        title = make_title(country_codes, metric_list, start_year, end_year)
 
-        metric_name = str(
-            wb.series.metadata.get(metric_list[0]).metadata.get('IndicatorName'))  # add first metric name to title
-        # metric_name #+= metric_name
-        try:
-            metric_name, original_metric_unit = metric_name.split('(', 1)  # if there is a ( in the name
-        except ValueError:  # if there is no ( in the name, except used over if statement as most metrics have (
-            original_metric_unit = ''
+        ylabel = get_ylabel(metric_list, ylabel)
 
-        test_title += metric_name
-        test_title += ', '
-        same_unit = False
-
-        for metric in metric_list[1:]:
-            metric_name = wb.series.metadata.get(metric).metadata.get('IndicatorName')
-            # metric_name += metric_name
-            try:
-                metric_name, metric_unit = metric_name.split('(', 1)
-            except ValueError:
-                metric_unit = ''
-            if metric_unit == original_metric_unit:  # if the same unit is found across all metrics, use it as y-label
-                same_unit = True
-            test_title += metric_name
-            test_title += ', '
-        test_title = test_title[:-2]  # remove last comma and space
-        if same_unit is True:
-            ylabel = original_metric_unit.replace(')', '')
-
-        # get title until first opening bracket saving the first half to title and the second half to ylabel
-        title = test_title
-        # if '(' in title and ylabel == '' and len(metric_list) == 1:  # if no title and ylabel is given
-        #     title, ylabel = title.split('(', 1)
-        #     if ylabel == '':
-        #         ylabel = ylabel[:-1]  # remove closing bracket
-        if len(metric_list) == 1:
-            ylabel = original_metric_unit.replace(')', '')
-
-    if len(metric_list) > 1 and len(country_list) > 1:
+    if len(metric_list) > 1 and len(country_list) > 1:  # if there are multiple metrics and countries
         # DF = DF.T  # transpose the dataframe
         # prevent no numeric data error
         DF = DF[2:]
@@ -147,6 +134,7 @@ def display_graph(DF, country_codes, metric_list, start_year, end_year, title=''
 
     pd.set_option('display.float_format', lambda x: '%.3f' % x)  # to display 3 decimal places
 
+    #  make appropriate legend
     if len(country_list) > 1 and len(metric_list) > 1:  # if multiple countries and indicators
         metric_labels = [wb.series.metadata.get(metric).metadata.get('IndicatorName') for metric in metric_list]
         legend_list = []
@@ -171,6 +159,69 @@ def display_graph(DF, country_codes, metric_list, start_year, end_year, title=''
     return plt
 
 
+def get_ylabel(metric_list, ylabel=""):
+    if ylabel != "":
+        return ylabel
+
+    same_unit = False
+    metric_name = str(
+        wb.series.metadata.get(metric_list[0]).metadata.get('IndicatorName'))  # add first metric name to title
+    try:
+        metric_name, original_metric_unit = metric_name.split('(', 1)  # if there is a ( in the name
+    except ValueError:  # if there is no ( in the name, except used over if statement as most metrics have (
+        original_metric_unit = ''
+    for metric in metric_list[1:]:
+        metric_name = wb.series.metadata.get(metric).metadata.get('IndicatorName')
+        try:
+            metric_name, metric_unit = metric_name.split('(', 1)
+        except ValueError:
+            metric_unit = ''
+        if metric_unit == original_metric_unit:  # if the same unit is found across all metrics, use it as y-label
+            same_unit = True
+    if same_unit is True:
+        ylabel = original_metric_unit.replace(')', '')
+    if len(metric_list) == 1:
+        ylabel = original_metric_unit.replace(')', '')
+    return ylabel
+
+
+def make_title(country_codes, metric_list, start_year, end_year):
+    title = ""
+    country_list = [wb.economy.metadata.get(country).metadata['ShortName'] for country in
+                    country_codes]  # make list of country names form their codes
+    for country in country_list:  # add a list of all countries to the title
+        title += country + ', '
+    title = title[:-2] + ' ' + str(start_year) + '-' + str(end_year) + ' '
+
+    test_title = title
+
+    metric_name = str(
+        wb.series.metadata.get(metric_list[0]).metadata.get('IndicatorName'))  # add first metric name to title
+    # metric_name #+= metric_name
+    try:
+        metric_name, _ = metric_name.split('(', 1)  # if there is a ( in the name
+    except ValueError:  # if there is no ( in the name, except used over if statement as most metrics have (
+        pass
+
+    test_title += metric_name
+    test_title += ', '
+
+    for metric in metric_list[1:]:
+        metric_name = wb.series.metadata.get(metric).metadata.get('IndicatorName')
+        try:
+            metric_name, _ = metric_name.split('(', 1)  # check if there is no metric uit
+        except ValueError:
+            pass
+        test_title += metric_name
+        test_title += ', '
+    test_title = test_title[:-2]  # remove last comma and space
+
+    # get title until first opening bracket saving the first half to title and the second half to ylabel
+    title = test_title
+
+    return title
+
+
 def download_graph(plt, file_name='plot', location='', file_format='png'):
     file_name = location + file_name + '.' + file_format  # download the graph as a png file
     plt.figure.savefig(file_name, bbox_inches='tight')
@@ -192,7 +243,7 @@ def makeHTMLTable(dataFrame):
 def get_three_letter_country_codes(country_list):
     """
     param country_list:
-    return:
+    return: list of country codes
     """
     country_codes = []
     for country in country_list:
