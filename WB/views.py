@@ -1,5 +1,6 @@
 # from django.http import Http404
 # from django.template import loader
+import requests
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.utils.datastructures import MultiValueDictKeyError
@@ -82,7 +83,7 @@ def graph(request):
 
     try:
         DF = get_data(countries, metrics, start_year, end_year)  # try to get data from WB API
-    except:
+    except requests.exceptions.ConnectionError:
         return render(request, 'WB/graph.html',
                       {'error': "There is a connection error with the World Bank's servers, please try again later. "})
     # print(DF)
@@ -117,8 +118,8 @@ def graph(request):
         # if len(countries) > 1 and len(metrics) > 1:
         #     DF = DF.T  # return the dataframe to its original orientation
     # create the graph
-    fig = display_graph(DF, countries, metrics, min_year, max_year, title, xlabel, ylabel,
-                        black_and_white=black_white, height=height, width=width)
+    display_graph(DF, countries, metrics, min_year, max_year, title, xlabel, ylabel,
+                  black_and_white=black_white, height=height, width=width)
     # download_graph(fig, 'graph')
     # download_CSV(DF, 'data')
 
