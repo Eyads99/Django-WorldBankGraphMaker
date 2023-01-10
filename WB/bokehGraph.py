@@ -1,4 +1,4 @@
-from bokeh.models import ColumnDataSource, BasicTickFormatter
+from bokeh.models import ColumnDataSource, BasicTickFormatter, Legend
 from bokeh.plotting import figure, show
 from bokeh.embed import components
 from bokeh.resources import INLINE
@@ -25,7 +25,7 @@ def make_bokeh_graph(DF, country_codes, metric_list, start_year=1960, end_year=2
 
     tooltip = make_tool_tip(metric_list=metric_list, country_list=country_codes, source=source)
 
-    p = figure(title=title, x_axis_label=xlabel, y_axis_label=ylabel, tooltips=tooltip)
+    p = figure(title=title, x_axis_label=xlabel, y_axis_label=ylabel, tooltips=tooltip, plot_width=1000)
 
     if source.column_names[0] == "Year":
 
@@ -52,6 +52,12 @@ def make_bokeh_graph(DF, country_codes, metric_list, start_year=1960, end_year=2
                      color=Category10[10][idx])  # to put dots on the line graph
 
     p.yaxis.formatter = BasicTickFormatter(use_scientific=False, precision=2)  # prevent use of scientific notation
+
+   #  p.add_layout(Legend(items=[  ], location=(0, -30)), 'right')
+
+    p.legend.location = "top_left"
+    p.legend.click_policy = "hide"
+
 
     script, div = components(p)  # return JS script and HTML code for graph
 
