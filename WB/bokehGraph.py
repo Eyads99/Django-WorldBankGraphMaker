@@ -53,11 +53,8 @@ def make_bokeh_graph(DF, country_codes, metric_list, start_year=1960, end_year=2
 
     p.yaxis.formatter = BasicTickFormatter(use_scientific=False, precision=2)  # prevent use of scientific notation
 
-   #  p.add_layout(Legend(items=[  ], location=(0, -30)), 'right')
-
     p.legend.location = "top_left"
-    p.legend.click_policy = "hide"
-
+    p.legend.click_policy = "mute"
 
     script, div = components(p)  # return JS script and HTML code for graph
 
@@ -66,7 +63,6 @@ def make_bokeh_graph(DF, country_codes, metric_list, start_year=1960, end_year=2
 
 def make_readable_title(data, multiple_countries=False,
                         multiple_metrics=False) -> str:
-
     if multiple_countries and multiple_metrics:  # if multiple countries and indicators
         data = data.replace("(", "").replace(')', '').replace("'", "").replace(" ", "")  # remove apostrophe and bracket
         title = data.split(',')  # split title elements by comma
