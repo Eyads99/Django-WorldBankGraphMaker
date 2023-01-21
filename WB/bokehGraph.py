@@ -85,7 +85,7 @@ def make_tool_tip(metric_list, country_list, source):
     len_country_list = len(country_list)
 
     if (len_country_list + len_metric_list) == 2:  # single country single metric
-        tooltip.append(("Value", ("@"+country_list[0])))  # tooltip.append((make_readable_title(country_list[0], False, False), "@"+country_list[0]))
+        tooltip.append(("Value", ("@"+country_list[0])))
     elif len_metric_list > 1 and len_country_list > 1:  # multiple countries and metrics
         tooltip = [(make_readable_title(col_name, True, True), "@{" + col_name + "}")
                    for col_name in source.column_names[:-1]]

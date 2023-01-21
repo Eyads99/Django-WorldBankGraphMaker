@@ -65,7 +65,7 @@ def get_data(country_codes, metric_codes, start_year=2000, end_year=2020):
 
 
 def display_graph(DF, country_codes, metric_list, start_year, end_year, title='', xlabel='Year', ylabel='',
-                  height=7, width=35, kind='line', black_and_white=False, ylim=None, xlim=None):
+                  height=7, width=35, kind='line', black_and_white=False):
     """
     make matplot graph
     :param DF:
@@ -80,8 +80,6 @@ def display_graph(DF, country_codes, metric_list, start_year, end_year, title=''
     :param width:
     :param kind:
     :param black_and_white:
-    :param ylim:
-    :param xlim:
     :return:
     """
 
@@ -129,9 +127,7 @@ def display_graph(DF, country_codes, metric_list, start_year, end_year, title=''
 
     # remove scientific notation from y-axis
     plt.ticklabel_format(style='plain', axis='y', useLocale=True)
-
     plt.set_xticks(range(start_year, end_year + 1))  # to remove 0.5 years
-
     pd.set_option('display.float_format', lambda x: '%.3f' % x)  # to display 3 decimal places
 
     #  make appropriate legend

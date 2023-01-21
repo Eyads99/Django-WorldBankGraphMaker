@@ -35,9 +35,7 @@ def get_name(request):
         form = NameForm()
 
     countries = getWBCountries()  # get all the countries from the API as a dict
-
     metrics = getWBMetrics()  # get all the metrics from the API as a dict
-
     context = {'countries': countries.items(), 'metrics': metrics.items(), 'form': form, }
 
     return render(request, 'WB/name.html', context)
@@ -52,9 +50,6 @@ def index(request):
 
 
 def graph(request):
-    # for key, value in request.GET.items():
-    #     print(key, value)
-    # extract the data from the request
 
     # get the request data
     countries = request.GET.getlist('states')  # get all the countries selected
