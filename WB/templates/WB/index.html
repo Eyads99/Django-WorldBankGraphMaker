@@ -24,6 +24,18 @@
         $(document).ready(function () {
             $('#metrics').select2({placeholder: "Select a metric", allowClear: true, maximumSelectionLength: 8});
         });
+
+    {#function to disable country selection if world is chosen#}
+        function DisableCountrySelection(WorldCheck)
+        {
+            var CountrySelect = document.getElementById("states");
+            CountrySelect.disabled=!!WorldCheck.checked;
+            if(!CountrySelect.disabled)
+            {
+                CountrySelect.focus();
+            }
+        }
+
     </script>
 
     <title>World Bank Graph Maker</title>
@@ -45,6 +57,10 @@
                 <option value="{{ code }}">{{ country }}</option>
             {% endfor %}
         </select>
+
+        <br>
+        <label for="WorldCheck"> World Map</label>
+        <input type="checkbox" id="WorldCheck" name="WorldCheck" value="WholeWorld" onclick="DisableCountrySelection(this)">
 
         <br><br>
         <label for="metrics">Select Metric(s)</label>
@@ -92,8 +108,6 @@
 
         {#            <label for="color">Pick a primary graph colour</label> not practical  #}
         {#            <input type="color" name="color" id="color">#}
-        {#            <br><br>#}
-
 
         <label for="auto_year" class="form-check-label">Auto adjust year range</label>
         <input type="checkbox" class="form-check-input" id="auto_year" name="auto_year" value="1" checked>
