@@ -6,7 +6,7 @@ from django.shortcuts import render
 from django.utils.datastructures import MultiValueDictKeyError
 
 from .WBAPI import getWBCountries, getWBMetrics, get_data, display_graph, makeHTMLTable, make_title, get_ylabel
-from .bokehGraph import make_bokeh_graph
+from .bokehGraph import make_bokeh_graph, make_world_map
 from .forms import NameForm
 
 from io import BytesIO
@@ -16,6 +16,23 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 matplotlib.use("Agg")
+
+All_countries = ["ABW", "AFG", "AGO", "ALB", "AND", "ARE", "ARG", "ARM", "ASM", "ATG", "AUS", "AUT", "AZE",
+                 "BDI", "BEL", "BEN", "BFA", "BGD", "BGR", "BHR", "BHS", "BIH", "BLR", "BLZ", "BMU", "BOL", "BRA",
+                 "BRB", "BRN", "BTN", "BWA", "CAF", "CAN", "CHE", "CHI", "CHL", "CHN", "CIV", "CMR", "COD", "COG",
+                 "COL", "COM", "CPV", "CRI", "CUB", "CUW", "CYM", "CYP", "CZE", "DEU", "DJI", "DMA", "DNK", "DOM",
+                 "DZA", "ECU", "EGY", "ERI", "ESP", "EST", "ETH", "FIN", "FJI", "FRA", "FRO", "FSM", "GAB", "GBR",
+                 "GEO", "GHA", "GIB", "GIN", "GMB", "GNB", "GNQ", "GRC", "GRD", "GRL", "GTM", "GUM", "GUY", "HKG",
+                 "HND", "HRV", "HTI", "HUN", "IDN", "IMN", "IND", "IRL", "IRN", "IRQ", "ISL", "ISR", "ITA", "JAM",
+                 "JOR", "JPN", "KAZ", "KEN", "KGZ", "KHM", "KIR", "KNA", "KOR", "KWT", "LAO", "LBN", "LBR", "LBY",
+                 "LCA", "LIE", "LKA", "LSO", "LTU", "LUX", "LVA", "MAC", "MAF", "MAR", "MCO", "MDA", "MDG", "MDV",
+                 "MEX", "MHL", "MKD", "MLI", "MLT", "MMR", "MNE", "MNG", "MNP", "MOZ", "MRT", "MUS", "MWI", "MYS",
+                 "NAM", "NCL", "NER", "NGA", "NIC", "NLD", "NOR", "NPL", "NRU", "NZL", "OMN", "PAK", "PAN", "PER",
+                 "PHL", "PLW", "PNG", "POL", "PRI", "PRK", "PRT", "PRY", "PSE", "PYF", "QAT", "ROU", "RUS", "RWA",
+                 "SAU", "SDN", "SEN", "SGP", "SLB", "SLE", "SLV", "SMR", "SOM", "SRB", "SSD", "STP", "SUR", "SVK",
+                 "SVN", "SWE", "SWZ", "SXM", "SYC", "SYR", "TCA", "TCD", "TGO", "THA", "TJK", "TKM", "TLS", "TON",
+                 "TTO", "TUN", "TUR", "TUV", "TZA", "UGA", "UKR", "URY", "USA", "UZB", "VCT", "VEN", "VGB", "VIR",
+                 "VNM", "VUT", "WLD", "WSM", "XKX", "YEM", "ZAF", "ZMB", "ZWE"]
 
 
 def get_name(request):
@@ -50,9 +67,12 @@ def index(request):
 
 
 def graph(request):
-
     # get the request data
-    countries = request.GET.getlist('states')  # get all the countries selected
+    if 'WorldCheck' in request.GET:
+        countries = request.GET.getlist('WorldCheck')
+
+    else:
+        countries = request.GET.getlist('states')  # get all the countries selected
     metrics = request.GET.getlist('metrics')  # get all the metrics selected
     start_year = int(request.GET['year1'])
     end_year = int(request.GET['year2'])
@@ -66,6 +86,39 @@ def graph(request):
     # colors = request.GET.getlist('colors')
     # points = request.GET.getlist('points') #should the points be displayed
 
+    if countries[0] == "WholeWorld":
+        if len(metrics) > 1:
+            return render(request, 'WB/graph.html',
+                          {'error': "Please select a single metric when selecting the whole world"})
+        pass
+        try:
+            DF = get_data(All_countries, metrics, start_year, end_year)  # try to get data from WB API
+        except requests.exceptions.ConnectionError:
+            return render(request, 'WB/graph.html',
+                          {
+                           'error': "There is a connection error with the World Bank's servers, please try again later."
+                          })
+        bokeh_script, bokeh_div, inline_resource = make_world_map(DF=DF, metric=metrics, start_year=start_year, end_year=end_year,
+                                                 title=title, xlabel=xlabel, ylabel=ylabel)
+        #inline_resource = ""
+        # make_bokeh_graph(DF=DF, country_codes=countries, metric_list=metrics,
+        #                                                             ylabel=get_ylabel(metrics, ylabel),
+        #                                                             title=make_title(countries, metrics, start_year,
+        #                                                                              end_year),
+        #                                                             start_year=start_year,
+        #                                                             end_year=end_year)  # get bokeh JS and HTML
+
+        context = {
+            'BOKEH_SCRIPT': bokeh_script,
+            'BOKEH_DIV': bokeh_div,
+            'resources': inline_resource,
+            'CSV_FILENAME': './../../data.csv',
+            # 'plt': fig,
+            # 'extra_info': 'This is extra info',
+            # 'CSV': ',' + (DF.to_csv(index=True, header=True)).split('\n', 1)[1]
+            # removes numbered cols on the first line
+        }
+        return render(request, 'WB/graph.html', context)
     try:
         auto_scale = request.GET['auto_year']
     except MultiValueDictKeyError:  # if auto year option not selected it will not be sent with the request
