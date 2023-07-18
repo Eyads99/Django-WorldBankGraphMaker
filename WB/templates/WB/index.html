@@ -29,10 +29,13 @@
         function DisableCountrySelection(WorldCheck)
         {
             var CountrySelect = document.getElementById("states");
+            var EndYear = document.getElementById("year2");
             CountrySelect.disabled=!!WorldCheck.checked;
+            EndYear.disabled=!!WorldCheck.checked;
             if(!CountrySelect.disabled)
             {
                 CountrySelect.focus();
+                EndYear.focus();
             }
         }
 
@@ -60,7 +63,7 @@
 
         <br>
         <label for="WorldCheck"> World Map</label>
-        <input type="checkbox" id="WorldCheck" name="WorldCheck" value="WholeWorld" onclick="DisableCountrySelection(this)">
+        <input type="checkbox" title="Shows map based on starting year" id="WorldCheck" name="WorldCheck" value="WholeWorld" onclick="DisableCountrySelection(this)">
 
         <br><br>
         <label for="metrics">Select Metric(s)</label>
@@ -109,7 +112,7 @@
         {#            <label for="color">Pick a primary graph colour</label> not practical  #}
         {#            <input type="color" name="color" id="color">#}
 
-        <label for="auto_year" class="form-check-label">Auto adjust year range</label>
+        <label for="auto_year" title="Shrinks range to only include years with data" class="form-check-label">Auto adjust year range</label>
         <input type="checkbox" class="form-check-input" id="auto_year" name="auto_year" value="1" checked>
         <br>
         <input type="submit" class="btn btn-primary mb-3" value="Make Graph">

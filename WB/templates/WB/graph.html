@@ -20,18 +20,13 @@
 
 {% else %}
     <h1>Your Graph</h1>
-    <img src="data:image/png;base64, {{ GRAPH_IMG }}" alt="graph" width="1250"/>
-    <br>
-    <a href="data:image/png;base64, {{ GRAPH_IMG }}" download="graph.png">Download Graph</a>
-    <br>
-    <a class="button" href="data:text/csv; {{ CSV }}" download="data.csv">Download CSV file</a>
-    <br><br>
 
-    <button style="color: #4545ba" id="clickme">Click to see the table and more info</button>
-    <div class="table table-striped" id="table" style=" display: none;">
-        {#            Extra info: make a better table  #}
-        {{ table|safe }}
-    </div>
+
+{#    <button style="color: #4545ba" id="clickme">Click to see the table and more info</button>#}
+{#    <div class="table table-striped" id="table" style=" display: none;">#}
+        {#            Not needed with downloadable CSV  #}
+{#        {{ table|safe }}#}
+{#    </div>#}
 
     <script>
         const TABLE = document.getElementById("table");
@@ -47,6 +42,14 @@
     {{ BOKEH_MAP|safe }}
     {{ BOKEH_SCRIPT|safe }}
     {{ BOKEH_DIV|safe }}
+
+{#    old matplotlib graph now using bokeh #}
+{#    <img src="data:image/png;base64, {{ GRAPH_IMG }}" alt="graph" width="1250"/>#}
+{#    <br>#}
+{#    <a href="data:image/png;base64, {{ GRAPH_IMG }}" download="graph.png">Download Graph</a>#}
+    <br>
+    <a class="button" href="data:text/csv; {{ CSV }}" download="data.csv">Download CSV file</a>
+    <br><br>
 
     <!--try with ajax-->
 {% endif %}

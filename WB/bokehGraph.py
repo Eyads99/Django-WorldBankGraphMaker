@@ -1,7 +1,11 @@
-from bokeh.models import ColumnDataSource, BasicTickFormatter, Legend, GeoJSONDataSource, LinearColorMapper, ColorBar
+import bokeh.models
+from bokeh.layouts import row, column, widgetbox
+from bokeh.models import ColumnDataSource, BasicTickFormatter, Legend, GeoJSONDataSource, LinearColorMapper, ColorBar, \
+    CustomJS, Slider, CustomJSFilter
+from bokeh.models.callbacks import CustomJS
 from bokeh.plotting import figure, show
 from bokeh.embed import components
-from bokeh.resources import INLINE
+from bokeh.resources import INLINE, CDN
 from bokeh.palettes import Category10, brewer
 import geopandas as gpd
 import json
@@ -85,24 +89,22 @@ def make_world_map(DF, metric, start_year=1960, end_year=2020, title='', xlabel=
     :return:
     """
 
-    def get_dataset(DF_i, gdf, year=2020, key=None, metric_i=None):
+    def merge_dataset(DF_i, gdf, year=2020, key=None, metric_i=None):
         DF_i = DF_i.iloc[2021 - year]  # assumes the latest year is 2021
         # Merge dataframes gdf and df_2016.
         if key is None:
             pass
-            # name of column for plotting is always
-            # key = DF_i.columns[3]
-        # merge with the geopandas dataframe
-        # DF_i.columns = ['value']
         DF_i = DF_i.reset_index(level=0)  # add index as a col to merge with gdf
-        merged = gdf.merge(DF_i, left_on='country_code', right_on='index', how='left')
-        # merged[key] = merged[key].fillna(0)
-        return merged # ###################
+        merged = gdf.merge(DF_i, left_on='country_code', right_on='index', how='inner')
 
-    def bokeh_plot_map(gdf, DF, column=None, plot_title=''):
+        # rename data column from the year to data
+        merged.rename(columns={year: 'data'}, inplace=True)
+        return merged
+
+    def bokeh_plot_map(gdf, DF, column=None, year=2020, plot_title=''):
         """Plot bokeh map from GeoJSONDataSource """
 
-        df_i = get_dataset(DF_i=DF, gdf=gdf, year=2020)  # get values for a given year
+        df_i = merge_dataset(DF_i=DF, gdf=gdf, year=year)  # get values for a given year
         geosource = get_geodatasource(df_i)
         palette = brewer['OrRd'][8]
         palette = palette[::-1]
@@ -119,8 +121,7 @@ def make_world_map(DF, metric, start_year=1960, end_year=2020, title='', xlabel=
         p.ygrid.grid_line_color = None
         # Add patch renderer to figure
         p.patches('xs', 'ys', source=geosource, fill_alpha=1, line_width=0.75, line_color='black',
-                  fill_color={'field': str(df_i.columns[-1]),
-                              'transform': color_mapper})  # TODO fix fill_color error does not fill
+                  fill_color={'field': str(df_i.columns[-1]), 'transform': color_mapper})
         # Specify figure layout.
         p.add_layout(color_bar, 'below')
         return p
@@ -133,28 +134,53 @@ def make_world_map(DF, metric, start_year=1960, end_year=2020, title='', xlabel=
     # Rename columns.
     gdf.columns = ['country', 'country_code', 'geometry']
     gdf = gdf.drop(gdf.index[159])  # remove Antarctica
+    gdf = gdf.set_geometry("geometry")
 
     p = bokeh_plot_map(gdf, DF=DF, column=3, plot_title='')
 
-    # script, div = components(p)  # return JS script and HTML code for world map
-    # return script, div, INLINE.render()
+    # adding year slider below
+    tools = 'wheel_zoom,box_zoom,pan,reset'
 
-    from bokeh.models.widgets import DataTable
-    map_pane = pn.pane.Bokeh(width=400)
-    metrics = list(getWBMetrics().values())
-    data_select = pnw.Select(name=metric[0], options=metrics)
-    year_slider = pnw.IntSlider(start=start_year, end=end_year + 1, value=start_year)
+    # merge GDF with DF data of starting year
+    gdf = merge_dataset(DF, gdf, year=start_year)
 
-    def update_map(event):
-        gdf_event = get_dataset(DF_i=DF, gdf=gdf, year=year_slider.value)
-        map_pane.object = bokeh_plot_map(DF=DF, gdf=gdf_event, plot_title=title)
-        return
+    slider = Slider(title='Year', value=start_year, start=1961, end=end_year, step=1)
 
-    year_slider.param.watch(update_map, 'value')
-    year_slider.param.trigger('value')
-    data_select.param.watch(update_map, 'value')
-    app = pn.Column(pn.Row(data_select, year_slider), map_pane)
-    script, div = components(app)
+    callback = CustomJS(args=dict(slider=slider, DF=ColumnDataSource(DF), GDF=ColumnDataSource(gdf.drop(gdf.columns[[2]], axis=1))),
+                                 code="""
+        var time_val = slider.value; //slider year
+        // Get the data from the data sources
+        const all_data = DF.data;
+        const map_data = GDF.data;
+
+        all_data.data = []
+
+        // Update the visible data
+        for(var i = 0; i < map_data.data.length; i++) 
+        {
+            if (all_data.time[i] == time_val)
+            {
+                map_data.data.push(map_data.x[i]);
+            }
+        }
+        GDF = map_data;
+        GDF.change.emit();
+    """)
+
+
+
+    def update_plot(attr, old, new):
+        Current_year = new
+        # get data for needed year
+        data = DF.T[Current_year]
+        gdf.update(merge_dataset(DF_i=data, gdf=gdf, year=Current_year))
+
+    # TODO integrate CUSTOMJS slider
+    slider.on_change('value', update_plot)
+
+
+    layout = p  # error in slider geo data
+    script, div = components(layout)  # return JS script and HTML code for world map
     return script, div, INLINE.render()
 
 
