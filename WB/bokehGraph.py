@@ -11,8 +11,6 @@ import geopandas as gpd
 import json
 import pandas as pd
 import wbgapi as wb
-import panel as pn
-import panel.widgets as pnw
 from .WBAPI import getWBCountries, getWBMetrics
 
 
