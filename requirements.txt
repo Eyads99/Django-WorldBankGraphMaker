@@ -1,4 +1,4 @@
-Django==4.0.8
+Django==4.1.10
 django-appconf==1.0.5
 django-select2==7.10.0
 matplotlib==3.5.1
@@ -8,7 +8,7 @@ Pillow==9.3.0
 pyparsing==3.0.7
 python-dateutil==2.8.2
 PyYAML==6.0
-requests==2.27.1
+requests>=2.31.0
 urllib3==1.26.8
 wbgapi==1.0.12
 bokeh==2.4.3
