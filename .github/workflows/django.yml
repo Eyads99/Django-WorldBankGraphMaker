@@ -2,9 +2,9 @@ name: Django Template tests
 
 on:
   push:
-    branches: [ bokeh ]
+    branches: [ master ]
   pull_request:
-    branches: [ bokeh ]
+    branches: [ master ]
 
 jobs:
   test:
