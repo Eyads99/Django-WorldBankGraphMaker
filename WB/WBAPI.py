@@ -89,9 +89,7 @@ def display_graph(DF, country_codes, metric_list, start_year, end_year, title=''
         return None
 
     if title == '':  # if no title is given
-
         title = make_title(country_codes, metric_list, start_year, end_year)
-
         ylabel = get_ylabel(metric_list, ylabel)
 
     if len(metric_list) > 1 and len(country_list) > 1:  # if there are multiple metrics and countries
@@ -103,8 +101,8 @@ def display_graph(DF, country_codes, metric_list, start_year, end_year, title=''
     if black_and_white:
         # use black for the lines and different markers and line styles
         style = ['ko-', 'ks--', 'kd-.', 'kx:', 'ko', 'k^', 'kv', 'ks', 'kx', 'kd', 'k+', 'k*', 'kp', 'kh', 'kH', 'kD',
-                 'k.', ]
-        plt = DF.plot(
+                 'k.']
+        plot = DF.plot(
             figsize=(width, height),
             title=title,
             xlabel=xlabel,
@@ -114,7 +112,7 @@ def display_graph(DF, country_codes, metric_list, start_year, end_year, title=''
             style=style
         )
     else:  # normal colour mode
-        plt = DF.plot(
+        plot = DF.plot(
             figsize=(width, height),
             ls='solid',
             title=title,
@@ -126,8 +124,8 @@ def display_graph(DF, country_codes, metric_list, start_year, end_year, title=''
         )
 
     # remove scientific notation from y-axis
-    plt.ticklabel_format(style='plain', axis='y', useLocale=True)
-    plt.set_xticks(range(start_year, end_year + 1))  # to remove 0.5 years
+    plot.ticklabel_format(style='plain', axis='y', useLocale=True)
+    plot.set_xticks(range(start_year, end_year + 1))  # to remove 0.5 years
     pd.set_option('display.float_format', lambda x: '%.3f' % x)  # to display 3 decimal places
 
     #  make appropriate legend
@@ -137,22 +135,22 @@ def display_graph(DF, country_codes, metric_list, start_year, end_year, title=''
         for metric in metric_labels:
             for country in reversed(country_list):
                 legend_list.append(country + ' : ' + metric)
-        plt.legend(legend_list, loc='best')
+        plot.legend(legend_list, loc='best')
 
     elif len(country_list) > 1:  # if multiple countries only
-        plt.legend(country_list, loc='upper left', bbox_to_anchor=(1, 1))  # list all countries in the legend
+        plot.legend(country_list, loc='upper left', bbox_to_anchor=(1, 1))  # list all countries in the legend
     else:
         metric_labels = [wb.series.metadata.get(metric).metadata.get('IndicatorName') for metric in metric_list]
-        plt.legend(metric_labels, loc='upper left', bbox_to_anchor=(1, 1))
+        plot.legend(metric_labels, loc='upper left', bbox_to_anchor=(1, 1))
 
-    plt.bbox_inches = 'tight'  # to remove whitespace around the graph
+    plot.bbox_inches = 'tight'  # to remove whitespace around the graph
 
     # if there is a negative value add dashed line at 0 on Y-axis
     if DF.min(numeric_only=True).min() < 0:
-        plt.axhline(y=0, color='black', linestyle='dotted')
+        plot.axhline(y=0, color='black', linestyle='dotted')
 
     # plt.figure.show()
-    return plt
+    return plot
 
 
 def get_ylabel(metric_list, ylabel=""):
@@ -218,9 +216,9 @@ def make_title(country_codes, metric_list, start_year, end_year):
     return title
 
 
-def download_graph(plt, file_name='plot', location='', file_format='png'):
+def download_graph(plot, file_name='plot', location='', file_format='png'):
     file_name = location + file_name + '.' + file_format  # download the graph as a png file
-    plt.figure.savefig(file_name, bbox_inches='tight')
+    plot.figure.savefig(file_name, bbox_inches='tight')
 
 
 def download_CSV(dataFrame, file_name='data'):

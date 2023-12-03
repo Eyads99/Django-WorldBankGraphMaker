@@ -59,8 +59,8 @@ def get_name(request):
 
 
 def index(request):
-    countries = getWBCountries()  # get all the countries from the API as a dict
-    metrics = getWBMetrics()  # get all the metrics from the API as a dict
+    countries = getWBCountries()  # get all the countries from the API as a dict to populate drop-down
+    metrics = getWBMetrics()  # get all the metrics from the API as a dict to populate drop-down
 
     context = {'countries': countries.items(), 'metrics': metrics.items(), }
     return render(request, 'WB/index.html', context)

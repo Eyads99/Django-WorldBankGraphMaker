@@ -197,6 +197,7 @@ def make_readable_title(data, multiple_countries=False,
 
 
 def make_tool_tip(metric_list, country_list, source):
+
     tooltip = [
         # ("Value", "@AFG"),
         # ("Year", "@Year")
