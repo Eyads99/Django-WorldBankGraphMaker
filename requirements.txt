@@ -1,6 +1,6 @@
 Django==4.2.26
 django-appconf==1.0.5
-django-select2==7.10.0
+django-select2==8.4.1
 matplotlib==3.5.1
 numpy==1.22.2
 pandas==1.4.1
