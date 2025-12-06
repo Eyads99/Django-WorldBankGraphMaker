@@ -10,7 +10,7 @@ class TestViews(TestCase):
 
     def test_graph_no_data(self):  # test graph page with example GET request that returns no data
         response = self.client.get(reverse('WB:graph'),
-                                   data={'states': 'ABW', 'metrics': 'AG.AGR.TRAC.NO', 'year1': '2019', 'year2': '2021',
+                                   data={'states': 'ABW', 'metrics': 'AG.LND.AGRI.K2', 'year1': '2019', 'year2': '2021',
                                          'title': '', 'xlabel': '', 'ylabel': '', 'auto_scale': '1', 'width': '35',
                                          'height': '7', 'black_white': '0'})
         self.assertEqual(response.status_code, 200)
