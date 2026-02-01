@@ -11,5 +11,5 @@ PyYAML==6.0
 requests>=2.31.0
 urllib3==2.6.3
 wbgapi==1.0.12
-bokeh==2.4.3
+bokeh==3.8.2
 geopandas~=0.12.2
