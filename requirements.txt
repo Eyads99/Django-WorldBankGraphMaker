@@ -1,4 +1,4 @@
-Django==4.2.29
+Django==4.2.30
 django-appconf==1.0.5
 django-select2==8.4.8
 matplotlib==3.5.1
