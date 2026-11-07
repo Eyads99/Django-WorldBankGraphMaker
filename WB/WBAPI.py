@@ -47,7 +47,7 @@ def get_data(country_codes, metric_codes, start_year=2000, end_year=2020):
     if start_year < 1960:
         print('Start year is less than 1960')
         return None
-    if end_year > 2022:
+    if end_year > 2026:
         print("End year is greater than current year")
         # return None
     if len(country_codes) > 1 and len(metric_codes) > 1:
