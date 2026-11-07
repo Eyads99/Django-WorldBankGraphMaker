@@ -88,7 +88,7 @@ def make_world_map(DF, metric, start_year=1960, end_year=2020, title='', xlabel=
     """
 
     def merge_dataset(DF_i, gdf, year=2020, key=None, metric_i=None):
-        DF_i = DF_i.iloc[2021 - year]  # assumes the latest year is 2021
+        DF_i = DF_i.iloc[2025 - year]  # assumes the latest year is 2021
         # Merge dataframes gdf and df_2016.
         if key is None:
             pass
