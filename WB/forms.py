@@ -13,8 +13,8 @@ class NameForm(forms.Form):
     # metrics = forms.CharField(label='Please select a metric',
     #                           widget=forms.Select(choices=getWBMetrics()))
     #
-    year1 = forms.IntegerField(label='Please select a starting year', min_value=1960, max_value=2022)
-    year2 = forms.IntegerField(label='Please select an ending year', min_value=1960, max_value=2022)
+    year1 = forms.IntegerField(label='Please select a starting year', min_value=1960, max_value=2026)
+    year2 = forms.IntegerField(label='Please select an ending year', min_value=1960, max_value=2026)
     title = forms.CharField(label='Please enter a title for the graph', max_length=100)
     xlabel = forms.CharField(label='Please enter a label for the x-axis', max_length=100)
     ylabel = forms.CharField(label='Please enter a label for the y-axis', max_length=100)
